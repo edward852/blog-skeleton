@@ -92,6 +92,7 @@ checks:
 deploy:
   default:
     kind: git
-    remote: https://github.com/edward852/edward852.git
+    #remote: https://github.com/edward852/edward852.git
+    remote: git@github.com:edward852/edward852.github.com.git
     branch: master
     forced: true
