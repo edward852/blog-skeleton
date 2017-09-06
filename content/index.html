@@ -1,0 +1,44 @@
+---
+title: Home
+---
+<div id="_home_page_" class=''>
+    <% paginated_articles(1).each do |post| %>
+    <div class="ui piled segment">
+        <div class="ui tiny header">
+            <h1><%= post[:title] %></h1>
+        </div>
+        <div class="ui basic grey label">Posted at:<div class="detail"><%= get_pretty_date(post) %></div></div>
+        <div class="tags"><%= tags_for_ex(post) %></div>
+        <div class="ui hidden divider"></div>
+        <article>
+            <%= get_post_excerpt(post) %>
+        </article>
+    </div>
+    <% end %>
+</div>
+<script type="text/javascript">
+ function getPaginatedArticles(page)
+ {
+ 	   $.ajax({
+         url: 'pages-'+page+'.html',
+           type: 'get',
+           contentType: 'text/html; charset=utf-8',
+           processData: false,
+           async: true,
+           cache: false,
+           success: function (result, status, xhr) {
+             hp = $('#_home_page_');
+
+             console.log('get paginated articles ok!');
+             hp.append(result);
+			         hp.data('cur_page', page);
+           },
+           error: function (xhr, status, error) {
+               console.log('get paginated articles error(or empty)!');
+           },
+		       complete: function (xhr, status) {
+			         $('#page-loader').removeClass('visible');
+           }
+       });
+ }
+</script>

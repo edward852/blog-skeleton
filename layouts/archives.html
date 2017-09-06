@@ -1,0 +1,26 @@
+<% render '/default.*' do %>
+<div class='ui piled segments'>
+    <div class="ui segment">
+        <div class="ui tiny header">
+            <h1><%= item[:title] %></h1>
+        </div>
+    </div>
+    <div class="ui blue segment">
+        <% @items.find_all('/archives/*').each do |arch_item| %>
+        <h2 class="ui header"><i class="calendar icon"></i><div class="content"><%= link_to arch_item[:name],arch_item.path %></div></h2>
+        <div class="ui huge celled selection animated list">
+            <% arch_item[:ids].map{|id| @items[id]}.each do |post| %>
+            <div class="item">
+                <div class="content">
+                    <a class="header" href="<%= post.path %>"><%= post[:title] %></a>
+                    <div class="description"><%= get_pretty_date(post) %></div>
+		            </div>
+            </div>
+            <% end %>
+        </div>
+        <% end %>
+        <div class="ui hidden divider"></div>
+    </div>
+</div>
+<% end %>
+

@@ -1,0 +1,147 @@
+#!/usr/bin/env ruby
+
+preprocess do
+  # transform in-buffer settings in org file to metadata
+  items.select { |i| i.identifier =~ '/**/*.org' }.each do |i|
+    org_ibs_to_metadata(File.expand_path('content' + i.identifier)).each do |key, val|
+      i[key] = val
+    end
+  end
+
+  @config[:items_per_page] = 3
+  seq_posts = sorted_articles.freeze
+  # set prev/post attributes
+  # create tag items so that we can compile and layout them later
+  next_item = nil
+  seq_posts.each do |i|
+    # item changes at different processing stage, we use identifier instead.
+    i[:next_item_id] = next_item.identifier unless next_item.nil?
+    next_item[:prev_item_id] = i.identifier unless next_item.nil?
+    next_item = i
+
+    unless i[:tags].nil?
+      i[:tags].each do |tag|
+        tag_id = tag_id(tag)
+
+        if @items[tag_id].nil? then
+          content = ''
+          attributes = { :kind => 'tag', :ref => 1, :tag => tag, :title => 'Tag: '+tag }
+          #puts "Creating tag item: #{tag}"
+          @items.create(content, attributes, tag_id)
+        else
+          @items[tag_id][:ref] += 1
+          #puts "Tag item #{tag} ref #{@items[tag_id][:ref]}"
+        end
+      end
+    end
+
+    unless i[:created_at].nil?
+      t = Time.parse(i[:created_at])
+      archive_id = archive_id(t)
+      attributes = { :kind => 'archive', :title => 'Archive: '+archive_name(t), :ids => [i.identifier], :name => archive_name(t)}
+
+      if @items[archive_id].nil? then
+        #puts "Creating archive item: #{archive_id}"
+        @items.create('', attributes, archive_id)
+      else
+        @items[archive_id][:ids].push(i.identifier)
+      end
+    end
+
+  end
+
+  attributes = { :kind => 'tags', :title => 'Tags' }
+  @items.create('', attributes, '/tags')
+
+  attributes = { :kind => 'archives', :title => 'Archives'}
+  @items.create('', attributes, '/archives')
+
+  pages = (seq_posts.size+@config[:items_per_page]-1)/@config[:items_per_page]
+  1.upto(pages).each do |page|
+    attributes = { :kind => 'pages', :title => 'Page '+page.to_s, :page => page  }
+    @items.create('', attributes, '/pages-'+page.to_s)
+  end
+
+  # debug prev/post attributes
+  if false then
+    seq_posts.each do |i|
+      puts i.identifier
+      puts "prev: #{i[:prev_item_id]}" unless i[:prev_item_id].nil?
+      puts "post: #{i[:next_item_id]}" unless i[:next_item_id].nil?
+    end
+  end
+
+end
+
+compile '/{tags/*,archives/*}' do
+  dir = /(\/[^\/]+)s/.match(item.identifier).captures.first
+  filter :erb
+  layout dir+'.*'
+  filter :relativize_paths, type: :html
+end
+
+compile '/{tags,archives}' do
+  filter :erb
+  layout item.identifier+'.*'
+  filter :relativize_paths, type: :html
+end
+
+route '/{tags,tags/*,archives,archives/*}' do
+  item.identifier+'/index.html'
+end
+
+compile '/pages-*' do
+  #filter :erb
+  layout '/pagination.html'
+  filter :relativize_paths, type: :html
+end
+
+route '/pages-*' do
+  item.identifier+'.html'
+end
+
+passthrough '/assets/**/*'
+passthrough '/favicon.ico'
+
+compile '/**/*.html' do
+  filter :erb
+  layout '/default.*'
+  filter :relativize_paths, type: :html
+end
+
+# This is an example rule that matches Markdown (.md) files, and filters them
+# using the :kramdown filter. It is commented out by default, because kramdown
+# is not bundled with Nanoc or Ruby.
+#
+#compile '/**/*.md' do
+#  filter :kramdown
+#  layout '/default.*'
+#end
+
+compile '/posts/*.org' do
+  filter :org_link_fix_filter
+  filter :pandoc, args: [
+           { from: :org, to: :html5, wrap: :none, template: 'html5.template' },
+           :number_sections, :toc, :mathjax
+         ]
+  layout '/post.*'
+  filter :relativize_paths, type: :html
+end
+
+route '/posts/*.org' do
+  get_post_url item
+end
+
+route '/**/*.{html,md}' do
+  if item.identifier =~ '/index.*'
+    '/index.html'
+  else
+    item.identifier.without_ext + '/index.html'
+  end
+end
+
+compile '/**/*' do
+  write item.identifier.to_s
+end
+
+layout '/**/*', :erb

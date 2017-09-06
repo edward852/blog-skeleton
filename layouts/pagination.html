@@ -1,0 +1,14 @@
+<% paginated_articles(item[:page]).each do |post| %>
+<div class="ui piled segment">
+	<div class="ui tiny header">
+	    <h1><%= post[:title] %></h1>
+	</div>
+	<div class="ui basic grey label">Posted at:<div class="detail"><%= get_pretty_date(post) %></div></div>
+	<div class="tags"><%= tags_for_ex(post) %></div>
+	<div class="ui hidden divider"></div>
+	<article>
+	    <%= get_post_excerpt(post) %>
+	</article>
+</div>
+<% end %>
+

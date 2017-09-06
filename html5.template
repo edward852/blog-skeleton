@@ -1,0 +1,7 @@
+$if(toc)$
+<nav id="_SRC_TOC_" style="display:none">
+$toc$
+</nav>
+$endif$
+$body$
+

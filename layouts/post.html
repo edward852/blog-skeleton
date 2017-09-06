@@ -1,0 +1,71 @@
+<% render '/default.*' do %>
+<div class='ui piled segments'>
+    <div class="ui segment">
+        <div class="ui tiny header">
+            <h1><%= item[:title] %></h1>
+        </div>
+    </div>
+    <div class="ui blue segment">
+        <div class="ui basic grey label">Posted at:<div class="detail"><%= get_pretty_date(item) %></div></div>
+        <div class="tags"><%= tags_for_ex(item) %></div>
+        <div class="ui hidden divider"></div>
+        <article>
+            <%= yield %>
+        </article>
+    </div>
+    <div class="ui secondary segment">
+        <div class="ui list">
+            <% unless item[:prev_item_id].nil? %>
+            <a class="item" href="<%= items[item[:prev_item_id]].path %>">
+                <div class="ui url blue label">&laquo; Prev</div><%= items[item[:prev_item_id]][:title] %>
+            </a>
+            <% end %>
+            <% unless item[:next_item_id].nil? %>
+            <a class="item" href="<%= items[item[:next_item_id]].path %>">
+                <div class="ui url blue label">&raquo; Next</div><%= items[item[:next_item_id]][:title] %>
+            </a>
+            <% end %>
+        </div>
+    </div>
+    <div class="ui blue segment">
+		<% unless item[:commenting].eql?false %>
+        <script>
+         var idcomments_acct = 'c5bb6e189e91abf8985279b97aa3ab46';
+         var idcomments_post_id;
+         var idcomments_post_url;
+        </script>
+        <span id="IDCommentsPostTitle" style="display:none"></span>
+        <script type='text/javascript' src='https://www.intensedebate.com/js/genericCommentWrapperV2.js' defer></script>
+		<% end %>
+    </div>
+</div>
+<script type="text/javascript">
+ function genTocAtLevel(sp, dp, lvl) {
+     c = sp.find('>ul>li');
+     if (0 != c.length) {
+         c.each(function(i,n){
+             nn = $(n);
+             itStr = '<div class="item"></div>';
+             dp.append(itStr);
+
+             it = dp.find('>.item:last');
+             a = nn.find('>a');
+             if (0 != a.length) {
+                 //console.log('level: '+lvl+' item: '+a.text());
+                 // clear id in case of internal links
+                 a.children().attr('id', '');
+
+                 it.append(a.first().clone());
+             }
+             if (0 != nn.find('>ul>li').length){
+                 mnStr = '<div class="menu"></div>';
+                 it.append(mnStr);
+                 mn = it.find('>.menu');
+                 genTocAtLevel(nn, mn, lvl+1);
+             }
+         });
+     }
+ }
+</script>
+<% end %>
+
