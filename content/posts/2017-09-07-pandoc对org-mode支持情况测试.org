@@ -1,0 +1,154 @@
+# -*- coding: utf-8 -*-
+#+TITLE:Pandoc对Org Mode支持情况测试
+#+AUTHOR:edward
+#+DATE:<2017-09-07 Thu 15:33>
+#+UPDATED_AT:<2017-09-07 Thu 15:33>
+#+TAGS: Pandoc OrgMode Spacemacs
+
+* Org Mode
+本博客的博文是在Spacemacs上通过Org Mode写作的，然后由Pandoc转换成HTML格式的内容。\\
+本篇主要的内容就是测试Pandoc对Org Mode的支持情况是否满足日常使用需求，也方便以后写作时查阅。\\
+
+** 标题Title
+子标题在行首以星号*加空格指定，几个星号就代表几级标题。
+
+** 段落Paragraph
+段落之间以至少一行空行为分隔，也可以通过 ~\\~ 强制段落内换行。
+
+段落一的第一行 \\
+段落一的第二行 \\
+...\\
+段落一的第N行
+
+段落二的第一行
+
+** <<links>>链接与图片
+链接分为分为外部链接和内部链接。\\
+外部链接，一般就是URL： [[http://orgmode.org/img/org-mode-unicorn-logo.png][org-mode-logo]] \\
+内部链接，也就是引用当前文档的某个位置。 \\
+可以通过以下方式标记位置：
+#+BEGIN_EXAMPLE
+<<target>>
+#+END_EXAMPLE
+其中 ~target~ 需要取一个有意义的、文档内唯一的名字。 \\
+然后通过以下方式引用，与HTML的锚类似：
+#+BEGIN_EXAMPLE
+[[#target][description]]
+#+END_EXAMPLE
+戳这个可以跳转到本章节起始位置☞ [[#links][链接与图片]] 。 \\
+快捷键是 ~SPC m i l~ ，代表在Spacemacs(SPC)当前模式(Mode)下insert link。
+
+** 列表
+列表分为有序列表和无序列表。
+
+1. 有序子项目一
+  - 无序子项目 1 :: 子项目1的描述
+  - 无序子项目 2 :: 子项目2的描述
+2. 有序子项目二
+  + 无序子项目 1
+  + 无序子项目 2
+
+以数字+ ~.~ 或 ~)~ 表示有序列表项：
+1) 有序子项目
+
+以 ~-~ 或 ~+~ 表示无序列表项：
+- 无序子项目
+
+** 字体样式                                                     :font:style:
+字体样式常用的有粗体、斜体、下划线、删除线、上标、下标等。\\
+~/斜体字/~ 对应 /斜体字/ \\
+~*粗体字*~ 对应 *粗体字* \\
+~+删除线+~ 对应 +删除线+ \\
+~_下划线_~ 对应 _下划线_ \\
+~~字面量~~ 对应 ~字面量~ \\
+~=等宽字=~ 对应 =等宽字= \\
+~H_{2}O~ 对应 H_{2}O \\
+~X^2~ 对应 X^2 \\
+可以看出来目前Pandoc并不支持下划线的样式。\\
+
+** 公式
+比较考验排版能力的数学公式，通过LaTex表示毫无压力、逼格满满。\\ 
+正文显示公式：$\sum_{i=0}^N\int_{a}^{b}g(t,i)\text{d}t$ \\
+单独显示公式：$$\sum_{i=0}^N\int_{a}^{b}g(t,i)\text{d}t$$ \\
+If $a^2=b$ and \( b=2 \), then the solution must be either $a=+\sqrt{2}$ or $a=-\sqrt{2}$. \\
+需要注意的是，这个特性的支持需要开启Pandoc的mathjax选项。
+
+** 分隔线
+
+5个以上横杠 ~-~ 单独为一行可以显示分隔线：
+-----
+
+** 插入引用或者代码
+引用：
+#+BEGIN_QUOTE
+Stay Hungry. Stay Foolish
+-- Steve Jobs
+#+END_QUOTE
+插入elisp代码：
+#+BEGIN_SRC emacs-lisp 
+(message "hello world")
+#+END_SRC
+C代码：
+#+BEGIN_SRC c -n -i
+int sayHello()
+{
+    printf("Hello!\n"); // hello everyone
+}
+#+END_SRC
+js代码：
+#+BEGIN_SRC js 
+var txt="Hello world!";
+document.write(txt.length);
+#+END_SRC
+org代码：
+#+BEGIN_SRC org
+#+BEGIN_EXAMPLE
+举栗子给猴看
+#+END_EXAMPLE
+#+END_SRC
+居中文字：
+#+BEGIN_CENTER
+居中的文字
+#+END_CENTER
+verse测试：
+#+BEGIN_VERSE
+This is verse
+#+END_VERSE
+
+目前Pandoc并不支持通过 ~#+INCLUDE:~ 插入文件内容
+#+INCLUDE: "2017-09-06-新博客启用.org"
+
+** 脚注Footnote
+脚注[fn:1]主要有数字脚注和命名脚注。\\
+在行首以下面的方式可以定义脚注：
+
+~[fn:数字] 数字脚注内容~ \\
+~[fn:名字] 命名脚注内容~ \\
+
+在文中通过 ~[fn:数字]~ 或者 ~[fn:名字]~ 引用即可。 \\
+创建脚注的快捷键是 ~SPC m i f~ ，代表在Spacemacs(SPC)当前模式(Mode)下insert footnote。\\
+脚注和原文之间的跳转也十分简单，在方框内敲回车即可。
+
+** 表格Table
+Org Mode下创建表格十分简便，基本上组合使用 ~|~ ~-~ ~Tab~ 这几个按键即可。 \\
+表格自动对齐和跳转使用 ~Tab~ 和 ~Shift Tab~ ，谁用谁知道 [[./../assets/images/emoticon_huaji.png]] 。
+
+| key      | value        |
+|----------+--------------|
+| long key | long测试中文 |
+
+** TODO 待测试
+不常用的特性还没测试。如果有某些特性需要我帮忙测试的话，可以在下面留言^_^。
+
+** DONE 已完成
+   CLOSED: <2017-09-07 Thu 16:56>
+
+已完成大部分常用特性的测试[fn:2]。
+
+* Footnotes
+
+[fn:1] http://orgmode.org/org.html#Footnotes
+
+[fn:2] http://orgmode.org/org.html
+
+
