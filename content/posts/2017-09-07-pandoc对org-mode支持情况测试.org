@@ -131,7 +131,8 @@ This is verse
 
 ** 表格Table
 Org Mode下创建表格十分简便，基本上组合使用 ~|~ ~-~ ~Tab~ 这几个按键即可。 \\
-表格自动对齐和跳转使用 ~Tab~ 和 ~Shift Tab~ ，谁用谁知道 [[./../assets/images/emoticon_huaji.png]] 。
+表格自动对齐和跳转使用 ~Tab~ 和 ~Shift Tab~ ，谁用谁知道 [[./../assets/images/emoticon_huaji.png]] 。 \\
+[[../assets/images/170907_org_tbl.gif]]
 
 | key      | value        |
 |----------+--------------|
