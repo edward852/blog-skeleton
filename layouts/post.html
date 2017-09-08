@@ -12,6 +12,9 @@
         <article>
             <%= yield %>
         </article>
+        <% unless item[:updated_at].nil? %>
+        <div class="ui horizontal grey divider header">Updated at: <%= get_updated_date(item) %></div>
+        <% end %>
         <div class="ui hidden divider"></div>
         <a href="/about#reward" >
           <img class="ui centered image" src="/assets/images/reward.png">

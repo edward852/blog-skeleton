@@ -3,6 +3,10 @@ module PostHelper
     attribute_to_time(post[:created_at]).strftime('%B %-d, %Y')
   end
 
+  def get_updated_date(post)
+    attribute_to_time(post[:updated_at]).strftime('%B %-d, %Y')
+  end
+
   def get_post_excerpt(post)
     more_regex = /<!--\s*more\s*-->/i
     para_regex = /<p>[^#][\s\S]*?(?=<\/p>)<\/p>/i
