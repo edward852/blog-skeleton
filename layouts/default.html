@@ -57,6 +57,10 @@
              type: 'fixed'
          });
 
+     $('.back-to-top').on('click', function () {
+        $('html,body').animate({scrollTop: 0}, 100);
+     });
+
      $('span.header-section-number ~ span[data-tag-name]').each(function(i,n){
          nn = $(n);
          nn.text(nn.attr('data-tag-name'));
@@ -85,6 +89,9 @@
              dp = $('#_dst_toc_');
              genTocAtLevel(sp, dp, 1);
 
+            $('.sidebar-toggle').on('click', function () {
+                $('.sidebar').sidebar({ transition: 'overlay', dimPage: false }).sidebar('toggle');
+            });
          }
 		     $(window).bind('hashchange', function() {
 			       if (location.hash) {

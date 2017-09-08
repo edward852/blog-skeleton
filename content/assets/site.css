@@ -40,3 +40,51 @@
     margin-right: 1em;
 }
 
+.sidebar-toggle {
+  position: fixed;
+  right: 50px;
+  bottom: 55px;
+  width: 25px;
+  height: 25px;
+  padding: 5px;
+  background: #222;
+  line-height: 0;
+  z-index: 1024;
+  cursor: pointer;
+}
+.sidebar-toggle-line {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  height: 2px;
+  width: 100%;
+  background: #87daff;
+  margin-top: 3px;
+}
+.sidebar-toggle-line:first-child {
+  margin-top: 0;
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 29px;
+  right: 50px;
+  z-index: 1024;
+  width: 25px;
+  height: 23px;
+  padding: 5px;
+  background: #222;
+  color: #fff;
+  cursor: pointer;
+}
+
+.back-to-top:before {
+  display: block;
+  content: " ";
+  margin-top: 2px;
+  width: 0;
+  height: 0;
+  border-width: 0 7px 8px 7px;
+  border-color: transparent transparent #fff transparent;
+  border-style: solid;
+}
