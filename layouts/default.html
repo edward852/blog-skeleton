@@ -92,7 +92,7 @@
              dp = $('#_dst_toc_');
              genTocAtLevel(sp, dp, 1);
 
-            $('.sidebar-toggle').on('click', function () {
+            $('.sidebar-toggle').show().on('click', function () {
                 $('.sidebar').sidebar({ transition: 'overlay', dimPage: false }).sidebar('toggle');
             });
          }
