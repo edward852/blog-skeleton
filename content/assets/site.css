@@ -42,49 +42,51 @@
 
 .sidebar-toggle {
   position: fixed;
-  right: 50px;
+  right: 10%;
   bottom: 105px;
-  width: 25px;
-  height: 25px;
+  width: 32px;
+  height: 32px;
   padding: 5px;
   background: #222;
   line-height: 0;
   z-index: 1024;
   cursor: pointer;
+  border-radius: 0.3em;
 }
 .sidebar-toggle-line {
   position: relative;
   display: inline-block;
   vertical-align: top;
-  height: 2px;
+  height: 3px;
   width: 100%;
   background: #87daff;
   margin-top: 3px;
 }
 .sidebar-toggle-line:first-child {
-  margin-top: 0;
+  margin-top: 3px;
 }
 
 .back-to-top {
   position: fixed;
-  bottom: 79px;
-  right: 50px;
+  bottom: 70px;
+  right: 10%;
   z-index: 1024;
-  width: 25px;
-  height: 23px;
+  width: 32px;
+  height: 32px;
   padding: 5px;
   background: #222;
   color: #fff;
   cursor: pointer;
+  border-radius: 0.3em;
 }
 
 .back-to-top:before {
   display: block;
   content: " ";
-  margin-top: 2px;
+  margin-top: 5px;
   width: 0;
   height: 0;
-  border-width: 0 7px 8px 7px;
+  border-width: 0 11px 12px 11px;
   border-color: transparent transparent #fff transparent;
   border-style: solid;
 }
