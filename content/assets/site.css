@@ -43,7 +43,7 @@
 .sidebar-toggle {
   position: fixed;
   right: 50px;
-  bottom: 55px;
+  bottom: 105px;
   width: 25px;
   height: 25px;
   padding: 5px;
@@ -67,7 +67,7 @@
 
 .back-to-top {
   position: fixed;
-  bottom: 29px;
+  bottom: 79px;
   right: 50px;
   z-index: 1024;
   width: 25px;
