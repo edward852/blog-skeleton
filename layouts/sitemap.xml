@@ -1,0 +1,1 @@
+<%= xml_sitemap(items: items.select { |i| !i[:kind].nil? || i.path.eql?('/') || i.path.start_with?('/about') }) %>

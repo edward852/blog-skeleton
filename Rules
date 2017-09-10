@@ -56,6 +56,9 @@ preprocess do
   attributes = { :kind => 'archives', :title => 'Archives'}
   @items.create('', attributes, '/archives')
 
+  attributes = { :title => 'Sitemap'}
+  @items.create('', attributes, '/sitemap.xml')
+
   pages = (seq_posts.size+@config[:items_per_page]-1)/@config[:items_per_page]
   1.upto(pages).each do |page|
     attributes = { :kind => 'pages', :title => 'Page '+page.to_s, :page => page  }
@@ -100,8 +103,18 @@ route '/pages-*' do
   item.identifier+'.html'
 end
 
+compile '/sitemap.xml' do
+  filter :erb
+  layout '/sitemap.xml'
+end
+
+route '/sitemap.*' do
+  item.identifier.to_s
+end
+
 passthrough '/assets/**/*'
 passthrough '/favicon.ico'
+passthrough '/robots.txt'
 
 compile '/**/*.html' do
   filter :erb

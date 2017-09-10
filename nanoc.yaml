@@ -89,6 +89,8 @@ checks:
     #   exclude_files: ['blog/page']
     exclude_files: []
 
+base_url: https://edward852.github.io
+
 deploy:
   default:
     kind: git

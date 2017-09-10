@@ -8,6 +8,7 @@ end
 
 group 'nanoc' do
 gem 'adsf'
+gem 'builder'
 gem 'nanoc-git'
 gem 'nokogiri'
 gem 'pandoc-ruby'

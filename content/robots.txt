@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /assets/images
+Sitemap: https://edward852.github.io/sitemap.xml
