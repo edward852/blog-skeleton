@@ -1,5 +1,22 @@
+body {
+	font-family: 'Linux Libertine',-apple-system,"Helvetica Neue",Helvetica,"Nimbus Sans L",Arial,"Liberation Sans","PingFang SC","Hiragino Sans GB","Source Han Sans CN","Source Han Sans SC","Microsoft YaHei","Wenquanyi Micro Hei","WenQuanYi Zen Hei","ST Heiti",SimHei,"WenQuanYi Zen Hei Sharp",sans-serif;
+
+
+}
+
 .pusher {
     background-color: #F8F8F8 !important;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.placeholder {
+	flex: 1 0 auto;
+}
+
+footer {
+	flex: 0 0 auto;
 }
 
 #gh-site .main.container {
