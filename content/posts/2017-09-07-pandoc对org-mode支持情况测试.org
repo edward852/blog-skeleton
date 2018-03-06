@@ -89,7 +89,7 @@ Stay Hungry. Stay Foolish
 (message "hello world")
 #+END_SRC
 C代码：
-#+BEGIN_SRC c -n -i
+#+BEGIN_SRC c -n
 int sayHello()
 {
     printf("Hello!\n"); // hello everyone

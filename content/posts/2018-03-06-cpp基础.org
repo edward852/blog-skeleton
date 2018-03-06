@@ -1,0 +1,420 @@
+# -*- coding: utf-8 -*-
+#+TITLE:C++基础
+#+AUTHOR: 时聆心语
+#+DATE:<2018-03-06 Tue 16:19>
+#+UPDATED_AT:<2018-03-06 Tue 16:19>
+#+TAGS: CPP
+
+* 简介
+本文主要参考 [[https://learnxinyminutes.com/docs/c%2B%2B/][Learn X in Y minutes]] 上的教程介绍C++相关的基础知识。\\
+
+相对于C语言，C++具有以下特点：\\
+
+- 支持数据的抽象与封装
+- 支持面向对象编程
+- 支持泛型编程
+
+* 头文件
+C语言的标准库头文件可以在C++中使用，方法是加上"c"前缀、去掉.h后缀。\\
+C++标准库的头文件使用时也不需要指定后缀，比如说iostream。
+
+#+BEGIN_SRC cpp
+#include <cstdio>
+#include <iostream>
+#+END_SRC
+
+* 命名空间
+C++引入了命名空间(namespace)概念，为变量、函数、类等提供隔离的作用域，防止命名冲突。\\
+通过namespace关键字可以定义命名空间(允许嵌套)。\\
+
+#+BEGIN_SRC cpp
+namespace MyMod {
+    namespace MySubMod {
+        void foo()
+        {
+            printf("This is MyMod::MySubMod::foo\n");
+        }
+    } // end nested namespace MySubMod
+} // end namespace MyMod
+#+END_SRC
+
+通过using namespace可以引入指定命名空间内所有symbol，比如说std命名空间。\\
+
+#+BEGIN_SRC cpp
+using namespace std;
+#+END_SRC
+
+又或者只引入某个symbol：\\
+
+#+BEGIN_SRC cpp
+using namespace std::cout;
+#+END_SRC
+* 输入/输出
+C++使用“流”来输入输出。\\
+通过<<插入数据到流中。\\
+通过>>从流中获取数据。\\
+cin、cout、和cerr分别对应stdin(标准输入)、stdout(标准输出)和stderr(标准错误)。\\
+
+#+BEGIN_SRC cpp
+#include <iostream> // 引入输入/输出流的头文件
+
+using namespace std; // 引入std命名空间中的符号，包括cin、cout等
+
+int main()
+{
+   int myInt;
+
+   // 在标准输出中显示
+   cout << "Enter your favorite number:\n";
+   // 从标准输入取值
+   cin >> myInt;
+   // 显示“Your favorite number is <myInt>”
+   cout << "Your favorite number is " << myInt << endl;
+}
+#+END_SRC
+
+* 字符串
+C++中的字符串是string类，提供比char *更好的封装与功能。\\
+可以使用+或者+=拼接字符串。\\
+
+#+BEGIN_SRC cpp
+#include <string>
+
+using namespace std; // std::string
+
+string strHello = "Hello";
+string strWorld = " World";
+
+cout << strHello + strWorld; // "Hello World"
+cout << strHello + " You";
+#+END_SRC
+* 引用
+C++提供引用来设置变量别名，本质上是特殊的指针，初始化后不能重新赋值。\\
+使用引用时的语法与原变量相同：不需要通过*解引用，不需要通过&取地址。\\
+常量引用不允许改变变量的值。\\
+
+#+BEGIN_SRC cpp
+string foo = "I am foo";
+string bar = "I am bar";
+
+string& fooRef = foo; // 建立了一个对foo的引用。
+fooRef += ". Hi!"; // 通过引用来修改foo的值
+cout << fooRef; // "I am foo. Hi!"
+
+const string& barRef = bar; // 建立指向bar的常量引用。
+// 和C语言中一样，（指针和引用）声明为常量时，对应的值不能被修改。
+barRef += ". Hi!"; // 这是错误的，不能修改一个常量引用的值。
+#+END_SRC
+* 类与面向对象编程
+
+#+BEGIN_SRC cpp
+#include <iostream>
+
+// 声明一个类。
+// 类通常在头文件（.h或.hpp）中声明。
+class Dog {
+    // 成员变量和成员函数默认情况下是私有（private）的。
+    std::string name;
+    int weight;
+
+// 在这个标签之后，所有声明都是公有（public）的，
+// 直到重新指定“private:”（私有继承）或“protected:”（保护继承）为止
+public:
+
+    // 默认的构造器
+    Dog();
+
+    // 这里是成员函数声明的一个例子。
+    // 可以注意到，我们在此处使用了std::string，而不是using namespace std
+    // 语句using namespace绝不应当出现在头文件当中。
+    void setName(const std::string& dogsName);
+
+    void setWeight(int dogsWeight);
+
+    // 如果一个函数不对对象的状态进行修改，
+    // 应当在声明中加上const。
+    // 这样，你就可以对一个以常量方式引用的对象执行该操作。
+    // 同时可以注意到，当父类的成员函数需要被子类重写时，
+    // 父类中的函数必须被显式声明为_虚函数（virtual）_。
+    // 考虑到性能方面的因素，函数默认情况下不会被声明为虚函数。
+    virtual void print() const;
+
+    // 函数也可以在class body内部定义。
+    // 这样定义的函数会自动成为内联函数。
+    void bark() const { std::cout << name << " barks!\n" }
+
+    // 除了构造器以外，C++还提供了析构器。
+    // 当一个对象被删除或者脱离其定义域时，它的析构函数会被调用。
+    // 这使得RAII这样的强大范式（参见下文）成为可能。
+    // 为了衍生出子类来，基类的析构函数必须定义为虚函数。
+    virtual ~Dog();
+
+}; // 在类的定义之后，要加一个分号
+
+// 类的成员函数通常在.cpp文件中实现。
+void Dog::Dog()
+{
+    std::cout << "A dog has been constructed\n";
+}
+
+// 对象（例如字符串）应当以引用的形式传递，
+// 对于不需要修改的对象，最好使用常量引用。
+void Dog::setName(const std::string& dogsName)
+{
+    name = dogsName;
+}
+
+void Dog::setWeight(int dogsWeight)
+{
+    weight = dogsWeight;
+}
+
+// 虚函数的virtual关键字只需要在声明时使用，不需要在定义时重复
+void Dog::print() const
+{
+    std::cout << "Dog is " << name << " and weighs " << weight << "kg\n";
+}
+
+void Dog::~Dog()
+{
+    std::cout << "Goodbye " << name << "\n";
+}
+
+int main() {
+    Dog myDog; // 此时显示“A dog has been constructed”
+    myDog.setName("Barkley");
+    myDog.setWeight(10);
+    myDog.print(); // 显示“Dog is Barkley and weighs 10 kg”
+    return 0;
+} // 显示“Goodbye Barkley”
+
+#+END_SRC
+
+** 继承
+
+#+BEGIN_SRC cpp
+// 这个类继承了Dog类中的公有（public）和保护（protected）对象
+class OwnedDog : public Dog {
+
+    void setOwner(const std::string& dogsOwner)
+
+    // 重写OwnedDogs类的print方法。
+    // 如果你不熟悉子类多态的话，可以参考这个页面中的概述：
+    // http://zh.wikipedia.org/wiki/%E5%AD%90%E7%B1%BB%E5%9E%8B
+
+    // override关键字是可选的，它确保你所重写的是基类中的方法。
+    void print() const override;
+
+private:
+    std::string owner;
+};
+
+// 与此同时，在对应的.cpp文件里：
+
+void OwnedDog::setOwner(const std::string& dogsOwner)
+{
+    owner = dogsOwner;
+}
+
+void OwnedDog::print() const
+{
+    Dog::print(); // 调用基类Dog中的print方法
+    // "Dog is <name> and weights <weight>"
+
+    std::cout << "Dog is owned by " << owner << "\n";
+    // "Dog is owned by <owner>"
+}
+#+END_SRC 
+
+** 初始化与运算符重载
+
+#+BEGIN_SRC cpp
+#include <iostream>
+using namespace std;
+
+class Point {
+public:
+    // 可以以这样的方式为成员变量设置默认值。
+    double x = 0;
+    double y = 0;
+
+    // 定义一个默认的构造器。
+    // 除了将Point初始化为(0, 0)以外，这个函数什么都不做。
+    Point() { };
+
+    // 下面使用的语法称为初始化列表，
+    // 这是初始化类中成员变量的正确方式。
+    Point (double a, double b) :
+        x(a),
+        y(b)
+    { /* 除了初始化成员变量外，什么都不做 */ }
+
+    // 重载 + 运算符
+    Point operator+(const Point& rhs) const;
+
+    // 重载 += 运算符
+    Point& operator+=(const Point& rhs);
+
+    // 增加 - 和 -= 运算符也是有意义的，但这里不再赘述。
+};
+
+Point Point::operator+(const Point& rhs) const
+{
+    // 创建一个新的点，
+    // 其横纵坐标分别为这个点与另一点在对应方向上的坐标之和。
+    return Point(x + rhs.x, y + rhs.y);
+}
+
+Point& Point::operator+=(const Point& rhs)
+{
+    x += rhs.x;
+    y += rhs.y;
+    return *this;
+}
+
+int main () {
+    Point up (0,1);
+    Point right (1,0);
+    // 这里使用了Point类型的运算符“+”
+    // 调用up（Point类型）的“+”方法，并以right作为函数的参数
+    Point result = up + right;
+    // 显示“Result is upright (1,1)”
+    cout << "Result is upright (" << result.x << ',' << result.y << ")\n";
+    return 0;
+}
+
+#+END_SRC
+
+* 异常处理
+
+#+BEGIN_SRC cpp
+// 在_try_代码块中拋出的异常可以被随后的_catch_捕获。
+try {
+    // 不要用 _new_关键字在堆上为异常分配空间。
+    throw std::exception("A problem occurred");
+}
+// 如果拋出的异常是一个对象，可以用常量引用来捕获它
+catch (const std::exception& ex)
+{
+  std::cout << ex.what();
+// 捕获尚未被_catch_处理的所有错误
+} catch (...)
+{
+    std::cout << "Unknown exception caught";
+    throw; // 重新拋出异常
+}
+
+#+END_SRC
+
+* RAII
+
+#+BEGIN_SRC cpp
+void doSomethingWithAFile(const char* filename)
+{
+    // 首先，让我们假设一切都会顺利进行。
+
+    FILE* fh = fopen(filename, "r"); // 以只读模式打开文件
+
+    doSomethingWithTheFile(fh);
+    doSomethingElseWithIt(fh);
+
+    fclose(fh); // 关闭文件句柄
+}
+
+// 不幸的是，随着错误处理机制的引入，事情会变得复杂。
+// 假设fopen函数有可能执行失败，
+// 而doSomethingWithTheFile和doSomethingElseWithIt会在失败时返回错误代码。
+// （虽然异常是C++中处理错误的推荐方式，
+// 但是某些程序员，尤其是有C语言背景的，并不认可异常捕获机制的作用）。
+// 现在，我们必须检查每个函数调用是否成功执行，并在问题发生的时候关闭文件句柄。
+bool doSomethingWithAFile(const char* filename)
+{
+    FILE* fh = fopen(filename, "r"); // 以只读模式打开文件
+    if (fh == nullptr) // 当执行失败是，返回的指针是nullptr
+        return false; // 向调用者汇报错误
+
+    // 假设每个函数会在执行失败时返回false
+    if (!doSomethingWithTheFile(fh)) {
+        fclose(fh); // 关闭文件句柄，避免造成内存泄漏。
+        return false; // 反馈错误
+    }
+    if (!doSomethingElseWithIt(fh)) {
+        fclose(fh); // 关闭文件句柄
+        return false; // 反馈错误
+    }
+
+    fclose(fh); // 关闭文件句柄
+    return true; // 指示函数已成功执行
+}
+
+// C语言的程序员通常会借助goto语句简化上面的代码：
+bool doSomethingWithAFile(const char* filename)
+{
+    FILE* fh = fopen(filename, "r");
+    if (fh == nullptr)
+        return false;
+
+    if (!doSomethingWithTheFile(fh))
+        goto failure;
+
+    if (!doSomethingElseWithIt(fh))
+        goto failure;
+
+    fclose(fh); // 关闭文件
+    return true; // 执行成功
+
+failure:
+    fclose(fh);
+    return false; // 反馈错误
+}
+
+// 如果用异常捕获机制来指示错误的话，
+// 代码会变得清晰一些，但是仍然有优化的余地。
+void doSomethingWithAFile(const char* filename)
+{
+    FILE* fh = fopen(filename, "r"); // 以只读模式打开文件
+    if (fh == nullptr)
+        throw std::exception("Could not open the file.");
+
+    try {
+        doSomethingWithTheFile(fh);
+        doSomethingElseWithIt(fh);
+    }
+    catch (...) {
+        fclose(fh); // 保证出错的时候文件被正确关闭
+        throw; // 之后，重新抛出这个异常
+    }
+
+    fclose(fh); // 关闭文件
+    // 所有工作顺利完成
+}
+
+// 相比之下，使用C++中的文件流类（fstream）时，
+// fstream会利用自己的析构器来关闭文件句柄。
+// 只要离开了某一对象的定义域，它的析构函数就会被自动调用。
+void doSomethingWithAFile(const std::string& filename)
+{
+    // ifstream是输入文件流（input file stream）的简称
+    std::ifstream fh(filename); // 打开一个文件
+
+    // 对文件进行一些操作
+    doSomethingWithTheFile(fh);
+    doSomethingElseWithIt(fh);
+
+} // 文件已经被析构器自动关闭
+
+#+END_SRC
+
+* 杂项Misc
+** 空指针
+在C++中，用nullptr代替C语言中的NULL。\\
+
+** 严格原型
+
+#+BEGIN_SRC cpp
+// C++的函数原型与函数定义是严格匹配的
+void func(); // 这个函数不能接受任何参数
+
+// 而在C语言中
+void func(); // 这个函数能接受任意数量的参数
+#+END_SRC
