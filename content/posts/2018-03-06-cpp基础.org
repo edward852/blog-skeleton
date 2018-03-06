@@ -8,6 +8,7 @@
 * 简介
 本文主要参考 [[https://learnxinyminutes.com/docs/c%2B%2B/][Learn X in Y minutes]] 上的教程介绍C++相关的基础知识。\\
 
+
 相对于C语言，C++具有以下特点：\\
 
 - 支持数据的抽象与封装
@@ -36,6 +37,19 @@ namespace MyMod {
         }
     } // end nested namespace MySubMod
 } // end namespace MyMod
+
+void foo()
+{
+    printf("This is global foo\n");
+}
+
+int main()
+{
+    MyMod::MySubMod::foo();
+
+    ::foo(); // using global namespace
+    foo();
+}
 #+END_SRC
 
 通过using namespace可以引入指定命名空间内所有symbol，比如说std命名空间。\\
@@ -52,7 +66,7 @@ using namespace std::cout;
 * 输入/输出
 C++使用“流”来输入输出。\\
 通过<<插入数据到流中。\\
-通过>>从流中获取数据。\\
+通过>>从流中提取数据。\\
 cin、cout、和cerr分别对应stdin(标准输入)、stdout(标准输出)和stderr(标准错误)。\\
 
 #+BEGIN_SRC cpp
@@ -73,9 +87,14 @@ int main()
 }
 #+END_SRC
 
+如果需要实现类似于printf这样控制宽度、精度、对齐、进制(base)的效果，有两种选择：
+- 引入cstdio头文件使用printf函数
+- 通过 [[http://www.cplusplus.com/reference/ios/ios_base/][~ios_base类~]] 进行设置
+
 * 字符串
 C++中的字符串是string类，提供比char *更好的封装与功能。\\
-可以使用+或者+=拼接字符串。\\
+可以使用+或者+=拼接字符串(通过运算符重载实现)。\\
+~to_string~ 可以将常见类型转换为string类型。
 
 #+BEGIN_SRC cpp
 #include <string>
@@ -88,9 +107,31 @@ string strWorld = " World";
 cout << strHello + strWorld; // "Hello World"
 cout << strHello + " You";
 #+END_SRC
+
+对于非英文字符串应该使用wstring存储，比如说中文。\\
+string虽然也可以存储，但实际上是以char作为字符单元，类似计算长度、反转等操作结果并不正确。
+
+#+BEGIN_SRC cpp
+int main() {
+
+    wcout.imbue(locale("zh_CN.UTF-8"));
+
+    wstring zhHello = L"你好吗？";
+
+    wcout << zhHello << L" 长度： " << to_wstring(zhHello.size()) << endl;
+    // 显示 "你好吗？ 长度： 4"
+
+    reverse(zhHello.begin(), zhHello.end());
+    wcout << zhHello << endl;
+    // 显示 "？吗好你"
+
+    return 0;
+}
+#+END_SRC
+
 * 引用
 C++提供引用来设置变量别名，本质上是特殊的指针，初始化后不能重新赋值。\\
-使用引用时的语法与原变量相同：不需要通过*解引用，不需要通过&取地址。\\
+使用引用时的语法与原变量相同：不需要通过*解引用。\\
 常量引用不允许改变变量的值。\\
 
 #+BEGIN_SRC cpp
@@ -105,6 +146,9 @@ const string& barRef = bar; // 建立指向bar的常量引用。
 // 和C语言中一样，（指针和引用）声明为常量时，对应的值不能被修改。
 barRef += ". Hi!"; // 这是错误的，不能修改一个常量引用的值。
 #+END_SRC
+
+另外还有右值引用，因为超出本文范围，建议自行了解。
+
 * 类与面向对象编程
 
 #+BEGIN_SRC cpp
@@ -190,42 +234,6 @@ int main() {
 
 #+END_SRC
 
-** 继承
-
-#+BEGIN_SRC cpp
-// 这个类继承了Dog类中的公有（public）和保护（protected）对象
-class OwnedDog : public Dog {
-
-    void setOwner(const std::string& dogsOwner)
-
-    // 重写OwnedDogs类的print方法。
-    // 如果你不熟悉子类多态的话，可以参考这个页面中的概述：
-    // http://zh.wikipedia.org/wiki/%E5%AD%90%E7%B1%BB%E5%9E%8B
-
-    // override关键字是可选的，它确保你所重写的是基类中的方法。
-    void print() const override;
-
-private:
-    std::string owner;
-};
-
-// 与此同时，在对应的.cpp文件里：
-
-void OwnedDog::setOwner(const std::string& dogsOwner)
-{
-    owner = dogsOwner;
-}
-
-void OwnedDog::print() const
-{
-    Dog::print(); // 调用基类Dog中的print方法
-    // "Dog is <name> and weights <weight>"
-
-    std::cout << "Dog is owned by " << owner << "\n";
-    // "Dog is owned by <owner>"
-}
-#+END_SRC 
-
 ** 初始化与运算符重载
 
 #+BEGIN_SRC cpp
@@ -285,20 +293,57 @@ int main () {
 
 #+END_SRC
 
+** 继承
+
+#+BEGIN_SRC cpp
+// 这个类继承了Dog类中的公有（public）和保护（protected）对象
+class OwnedDog : public Dog {
+
+    void setOwner(const std::string& dogsOwner)
+
+    // 重写OwnedDogs类的print方法。
+    // 如果你不熟悉子类多态的话，可以参考这个页面中的概述：
+    // http://zh.wikipedia.org/wiki/%E5%AD%90%E7%B1%BB%E5%9E%8B
+
+    // override关键字是可选的，它确保你所重写的是基类中的方法。
+    void print() const override;
+
+private:
+    std::string owner;
+};
+
+// 与此同时，在对应的.cpp文件里：
+
+void OwnedDog::setOwner(const std::string& dogsOwner)
+{
+    owner = dogsOwner;
+}
+
+void OwnedDog::print() const
+{
+    Dog::print(); // 调用基类Dog中的print方法
+    // "Dog is <name> and weights <weight>"
+
+    std::cout << "Dog is owned by " << owner << "\n";
+    // "Dog is owned by <owner>"
+}
+#+END_SRC 
+
 * 异常处理
 
 #+BEGIN_SRC cpp
-// 在_try_代码块中拋出的异常可以被随后的_catch_捕获。
+// 在try代码块中拋出的异常可以被随后的catch捕获。
 try {
-    // 不要用 _new_关键字在堆上为异常分配空间。
+    // 不要用 new关键字在堆上为异常分配空间。
     throw std::exception("A problem occurred");
 }
 // 如果拋出的异常是一个对象，可以用常量引用来捕获它
 catch (const std::exception& ex)
 {
   std::cout << ex.what();
-// 捕获尚未被_catch_处理的所有错误
-} catch (...)
+// 捕获尚未被catch处理的所有错误
+}
+catch (...)
 {
     std::cout << "Unknown exception caught";
     throw; // 重新拋出异常
@@ -406,8 +451,52 @@ void doSomethingWithAFile(const std::string& filename)
 #+END_SRC
 
 * 杂项Misc
+
+** 函数重载
+C++支持函数重载，也就是可以定义一组名称相同而参数不同的函数。\\
+实现上类似于根据函数名+参数类型生成新的函数名。
+
+#+BEGIN_SRC cpp
+void print(char *myString)
+{
+    printf("String %s\n", myString);
+}
+
+void print(int myInt)
+{
+    printf("My int is %d", myInt);
+}
+
+int main()
+{
+    print("Hello");
+    print(15);
+}
+#+END_SRC
+** 参数默认值设置
+可以为函数的参数指定默认值，在调用者没有提供相应参数时按照默认值调用。\\
+具有默认值的参数必须放在所有的常规参数之后。
+
+#+BEGIN_SRC cpp
+void doSomethingWithInts(int a = 1, int b = 4)
+{
+
+}
+void invalidDeclaration(int a = 1, int b) // 这是错误的！
+{
+
+}
+
+int main()
+{
+    doSomethingWithInts();      // a = 1,  b = 4
+    doSomethingWithInts(20);    // a = 20, b = 4
+    doSomethingWithInts(20, 5); // a = 20, b = 5
+}
+#+END_SRC
+
 ** 空指针
-在C++中，用nullptr代替C语言中的NULL。\\
+    在C++中使用nullptr代替C语言中的NULL。
 
 ** 严格原型
 

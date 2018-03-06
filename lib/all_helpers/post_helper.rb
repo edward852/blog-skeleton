@@ -28,7 +28,7 @@ module PostHelper
   def get_post_url(post)
     y,m,d,slug = /([0-9]+)\-([0-9]+)\-([0-9]+)\-([^\/]+)/.match(post.identifier.without_ext).captures
 
-    "/#{y}/#{m}/#{slug}/index.html"
+    "/posts/#{y}/#{m}/#{slug}/index.html"
   end
 
   # page starting from 1
