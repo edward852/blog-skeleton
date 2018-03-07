@@ -1,0 +1,99 @@
+# -*- coding: utf-8 -*-
+#+TITLE:常见排序算法
+#+AUTHOR: 时聆心语
+#+DATE:<2018-02-08 Wed 18:02>
+#+UPDATED_AT:<2018-02-08 Wed 18:02>
+#+TAGS: Algorithm Sorting
+
+* 简介
+本文参考 [[http://download.csdn.net/download/morewindows/4443208][白话经典算法之七大排序]] ，介绍常见的排序算法，包括原理和实现。
+
+* 冒泡排序
+冒泡排序主要原理就是依次通过交换排序相邻元素，使得较大元素移到后面，这样第N轮最差能够排序好前N大元素。\\
+当然对于N个元素来说，最多只需要N-1轮。\\
+
+#+BEGIN_SRC cpp
+void BubbleSortV1(int nums[], int size)
+{
+    // check
+    if (!nums) return;
+
+    for (int end=size-1; 0<end; end--)
+    {
+        for (int idx=0, end=size-1; idx<end; idx++)
+        {
+            if (nums[idx] > nums[idx+1])
+            {
+                swap(nums[idx], nums[idx+1]);
+            }
+        }
+    }
+}
+#+END_SRC
+
+冒泡排序第一种优化是每一轮检查是否发生交换，如果没有则说明排序已经完成。
+
+#+BEGIN_SRC cpp
+void BubbleSortV2(int nums[], int size)
+{
+    // check
+    if (!nums) return;
+
+    for (int end=size-1; 0<end; end--)
+    {
+        int swapped = 0;
+
+        for (int idx=0, end=size-1; idx<end; idx++)
+        {
+            if (nums[idx] > nums[idx+1])
+            {
+                swapped = 1;
+                swap(nums[idx], nums[idx+1]);
+            }
+        }
+
+        if (!swapped)
+        {
+            break;
+        }
+    }
+}
+#+END_SRC
+
+冒泡排序第二种优化是每一轮记录最后一次交换的位置，下一轮只要遍历到这个位置即可。
+
+#+BEGIN_SRC cpp
+void BubbleSortV3(int nums[], int size)
+{
+    // check
+    if (!nums) return;
+
+    for (int end=size-1; 0<end; end--)
+    {
+        int last = 0;
+
+        for (int idx=0, end=size-1; idx<end; idx++)
+        {
+            if (nums[idx] > nums[idx+1])
+            {
+                last = idx;
+                swap(nums[idx], nums[idx+1]);
+            }
+        }
+
+        end = last+1;
+    }
+}
+#+END_SRC
+
+* 插入排序
+
+* 希尔排序
+
+* 选择排序
+
+* 归并排序
+
+* 快速排序
+
+* 堆排序

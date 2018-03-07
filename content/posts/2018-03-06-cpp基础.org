@@ -147,8 +147,32 @@ const string& barRef = bar; // 建立指向bar的常量引用。
 barRef += ". Hi!"; // 这是错误的，不能修改一个常量引用的值。
 #+END_SRC
 
-另外还有右值引用，因为超出本文范围，建议自行了解。
+对于临时对象的常量引用会使其生命周期延长到当前作用域。
 
+#+BEGIN_SRC cpp
+string tempObjectFun() { ... }
+string retVal = tempObjectFun();
+
+// 第二行代码实际上做了以下操作：
+//   - tempObjectFun返回一个string对象
+//   - 以返回的对象为参数调用构造函数生成新的string对象
+//   - 销毁返回的对象
+// 返回的对象就是临时对象。
+// 临时对象在函数返回对象的时候创建，在表达式求值结束时销毁(编译器可能会优化)
+foo(bar(tempObjectFun()))
+
+// 假设foo和bar都存在，tempObjectFun返回的对象传递给了bar并在foo调用前销毁
+// 在表达式求值结束时销毁临时对象的原则有一个例外的情况：
+// 当临时对象绑定到常量引用时，该临时对象的生命周期会延长到当前作用域。
+
+void constReferenceTempObjectFun() {
+  // constRef绑定了返回的临时对象，该对象在本函数范围内仍然有效。
+  const string& constRef = tempObjectFun();
+  ...
+}
+#+END_SRC
+
+另外还有右值引用，因为超出本文范围，建议自行了解。
 * 类与面向对象编程
 
 #+BEGIN_SRC cpp
@@ -179,7 +203,7 @@ public:
     // 应当在声明中加上const。
     // 这样，你就可以对一个以常量方式引用的对象执行该操作。
     // 同时可以注意到，当父类的成员函数需要被子类重写时，
-    // 父类中的函数必须被显式声明为_虚函数（virtual）_。
+    // 父类中的函数必须被显式声明为虚函数（virtual）。
     // 考虑到性能方面的因素，函数默认情况下不会被声明为虚函数。
     virtual void print() const;
 
@@ -191,6 +215,7 @@ public:
     // 当一个对象被删除或者脱离其定义域时，它的析构函数会被调用。
     // 这使得RAII这样的强大范式（参见下文）成为可能。
     // 为了衍生出子类来，基类的析构函数必须定义为虚函数。
+    // 如果没有定义为虚函数，那么通过基类引用或者指针销毁时，衍生类的析构函数并不会被调用。
     virtual ~Dog();
 
 }; // 在类的定义之后，要加一个分号
@@ -201,7 +226,7 @@ void Dog::Dog()
     std::cout << "A dog has been constructed\n";
 }
 
-// 对象（例如字符串）应当以引用的形式传递，
+// 复杂对象（例如字符串）应当以引用的形式传递，
 // 对于不需要修改的对象，最好使用常量引用。
 void Dog::setName(const std::string& dogsName)
 {
@@ -231,10 +256,11 @@ int main() {
     myDog.print(); // 显示“Dog is Barkley and weighs 10 kg”
     return 0;
 } // 显示“Goodbye Barkley”
-
 #+END_SRC
 
 ** 初始化与运算符重载
+变量可以直接赋初值，也可以在初始化列表中根据外部参数赋值。\\
+另外C++允许运算符重载，也就是改变运算符（比如说+，*）对于对象的行为。
 
 #+BEGIN_SRC cpp
 #include <iostream>
@@ -290,13 +316,16 @@ int main () {
     cout << "Result is upright (" << result.x << ',' << result.y << ")\n";
     return 0;
 }
-
 #+END_SRC
 
 ** 继承
+继承可以复用已有代码，可以分为单继承、多继承、虚拟继承。\\
+利用多态可以提高灵活性、增加可维护性。\\
+除了继承外，合理使用组合也是不错的选择。
 
 #+BEGIN_SRC cpp
-// 这个类继承了Dog类中的公有（public）和保护（protected）对象
+// 这个类继承了Dog类中的公有（public）和保护（protected）内容，
+// 私有（private）内容实际上也继承了，但是只能通过public或者protected方法进行访问
 class OwnedDog : public Dog {
 
     void setOwner(const std::string& dogsOwner)
@@ -329,6 +358,78 @@ void OwnedDog::print() const
 }
 #+END_SRC 
 
+* 模板
+C++模板主要用于泛型编程。
+
+#+BEGIN_SRC cpp
+template<class T>
+class Box {
+public:
+    // In this class, T can be used as any other type.
+    void insert(const T&) { ... }
+};
+
+// During compilation, the compiler actually generates copies of each template
+// with parameters substituted, so the full definition of the class must be
+// present at each invocation. This is why you will see template classes defined
+// entirely in header files.
+
+// To instantiate a template class on the stack:
+Box<int> intBox;
+
+// and you can use it as you would expect:
+intBox.insert(123);
+
+// You can, of course, nest templates:
+Box<Box<int> > boxOfBox;
+boxOfBox.insert(intBox);
+
+// Until C++11, you had to place a space between the two '>'s, otherwise '>>'
+// would be parsed as the right shift operator.
+
+// You will sometimes see
+//   template<typename T>
+// instead. The 'class' keyword and 'typename' keywords are _mostly_
+// interchangeable in this case. For the full explanation, see
+//   http://en.wikipedia.org/wiki/Typename
+// (yes, that keyword has its own Wikipedia page).
+
+// Similarly, a template function:
+template<class T>
+void barkThreeTimes(const T& input)
+{
+    input.bark();
+    input.bark();
+    input.bark();
+}
+
+// Notice that nothing is specified about the type parameters here. The compiler
+// will generate and then type-check every invocation of the template, so the
+// above function works with any type 'T' that has a const 'bark' method!
+
+Dog fluffy;
+fluffy.setName("Fluffy")
+barkThreeTimes(fluffy); // Prints "Fluffy barks" three times.
+
+// Template parameters don't have to be classes:
+template<int Y>
+void printMessage() {
+  cout << "Learn C++ in " << Y << " minutes!" << endl;
+}
+
+// And you can explicitly specialize templates for more efficient code. Of
+// course, most real-world uses of specialization are not as trivial as this.
+// Note that you still need to declare the function (or class) as a template
+// even if you explicitly specified all parameters.
+template<>
+void printMessage<10>() {
+  cout << "Learn C++ faster in only 10 minutes!" << endl;
+}
+
+printMessage<20>();  // Prints "Learn C++ in 20 minutes!"
+printMessage<10>();  // Prints "Learn C++ faster in only 10 minutes!"
+#+END_SRC
+
 * 异常处理
 
 #+BEGIN_SRC cpp
@@ -352,6 +453,9 @@ catch (...)
 #+END_SRC
 
 * RAII
+RAII指的是“资源获取就是初始化”（Resource Allocation Is Initialization）。\\
+RAII是C++中最强大的编程范式之一。\\
+简单来说，就是在构造函数中申请资源，在析构函数中释放资源。
 
 #+BEGIN_SRC cpp
 void doSomethingWithAFile(const char* filename)
@@ -449,7 +553,6 @@ void doSomethingWithAFile(const std::string& filename)
 } // 文件已经被析构器自动关闭
 
 #+END_SRC
-
 * 杂项Misc
 
 ** 函数重载
@@ -507,3 +610,9 @@ void func(); // 这个函数不能接受任何参数
 // 而在C语言中
 void func(); // 这个函数能接受任意数量的参数
 #+END_SRC
+
+* C++新特性
+C++语言也在不停地发展，比如说C++11引入了许多有用的新特性，可以留意相关的博文。
+
+* STL
+
