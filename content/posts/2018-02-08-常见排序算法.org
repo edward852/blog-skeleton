@@ -86,14 +86,156 @@ void BubbleSortV3(int nums[], int size)
 }
 #+END_SRC
 
+* 归并排序
+归并排序的重点在于合并。\\
+合并两个有序的序列是比较容易的：\\
+比较两序列第一个元素，取出较小的，然后重复上述步骤直到有序列为空，然后从另一序列取出剩余元素。\\
+容易知道单个元素序列是有序的；两个元素的序列可以拆分为两个单元素序列后合并成新的有序序列。\\
+既然如此，那么对于任意长度序列，我们总是可以将其二分为两个相邻序列，然后通过递归完成合并工作。\\
+这个递归过程最终会把序列拆分为单元素序列，而单元素序列是有序的，递归收敛，开始合并结果。\\
+这样通过先递归的分解数列，再合并数列就完成了归并排序。\\
+代码如下：
+
+#+BEGIN_SRC cpp
+void MergeSortHelper(int nums[], int l, int r, int temp[])
+{
+    if (l >= r)
+    {
+        return;
+    }
+
+    int m = l + (r-l)/2; // prevent overflow
+
+    MergeSortHelper(nums, l,   m, temp);
+    MergeSortHelper(nums, m+1, r, temp);
+    // [l, m] and [m+1, r] are sorted
+    // merge [l, m] and [m+1, r]
+
+    int i=l;
+    int j=m+1;
+    int k=l;
+
+    while (i<=m && j<=r)
+    {
+        if (nums[i] < nums[j])
+        {
+            temp[k] = nums[i++];
+        }
+        else
+        {
+            temp[k] = nums[j++];
+        }
+        k++;
+    }
+
+    while (i<=m)
+    {
+        temp[k++] = nums[i++];
+    }
+
+    while (j<=r)
+    {
+        temp[k++] = nums[j++];
+    }
+
+    while (l<=--k)
+    {
+        nums[k] = temp[k];
+    }
+}
+
+void MergeSort(int nums[], int size)
+{
+    int *temp = new int[size];
+
+    MergeSortHelper(nums, 0, size-1, temp);
+
+    delete[] temp;
+}
+#+END_SRC
+
+* 快速排序
+快速排序基本思路如下：
+  1. 先从数列中选出一个数(一般就是第一个数)作为基准数
+  2. 比基准数大的数移到它的右边，小于或等于它的数移到它的左边
+  3. 对于基准数左右两边区间重复第2步，直到区间内只有一个数
+
+其中第二步可以简单理解为挖坑填数。\\
+挖坑填数步骤如下：
+  1. frnt = l; back = r; 将基准数挖出形成第一个坑arr[frnt]
+  2. back--由后向前找比基准数小的数，填坑arr[frnt]，形成新坑arr[back]
+  3. frnt++由前向后找比基准数大的数，填坑arr[back]，形成新坑arr[frnt]
+  4. 再重复执行第2，3 二步直到 frnt==back，将基准数填坑arr[frnt]
+
+以一个数组作为示例，取区间第一个数为基准数。
+|    0 | 1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 |
+| +72+ | 6 | 57 | 88 | 60 | 42 | 83 | 73 | 48 | 85 |
+frnt=0, back=8
+|    0 | 1 |  2 |  3 |  4 |  5 |  6 |  7 |    8 |  9 |
+| *48* | 6 | 57 | 88 | 60 | 42 | 83 | 73 | +48+ | 85 |
+frnt=3, back=8
+|  0 | 1 |  2 |    3 |  4 |  5 |  6 |  7 |    8 |  9 |
+| 48 | 6 | 57 | +88+ | 60 | 42 | 83 | 73 | *88* | 85 |
+frnt=3, back=5
+|  0 | 1 |  2 |    3 |  4 |    5 |  6 |  7 |  8 |  9 |
+| 48 | 6 | 57 | *42* | 60 | +42+ | 83 | 73 | 88 | 85 |
+frnt=5, back=5
+|  0 | 1 |  2 |  3 |  4 |    5 |  6 |  7 |  8 |  9 |
+| 48 | 6 | 57 | 42 | 60 | *72* | 83 | 73 | 88 | 85 |
+从上面可以看到，比72小的数都在72左边，比72大的数都在72右边。
+
+代码如下：
+#+BEGIN_SRC cpp
+void partitionArray(int arr[], int l, int r)
+{
+    int seperator = arr[l];
+    int frnt = l;
+    int back = r;
+
+    if (l>=r)
+    {
+        return;
+    }
+
+    while (frnt<back)
+    {
+        while (frnt<back && seperator<arr[back])
+        {
+            back--;
+        }
+
+        if (frnt<back)
+        {
+            arr[frnt++] = arr[back];
+        }
+
+        while (frnt<back && seperator>=arr[frnt])
+        {
+            frnt++;
+        }
+
+        if (frnt<back)
+        {
+            arr[back--] = arr[frnt];
+        }
+    }
+
+    arr[frnt] = seperator;
+
+    partitionArray(arr, l, frnt-1);
+    partitionArray(arr, frnt+1, r);
+}
+
+void QuickSort(int nums[], int size)
+{
+    partitionArray(nums, 0, size-1);
+}
+#+END_SRC
+
+* 堆排序
+
 * 插入排序
 
 * 希尔排序
 
 * 选择排序
-
-* 归并排序
-
-* 快速排序
-
-* 堆排序
