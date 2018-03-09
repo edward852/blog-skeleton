@@ -366,7 +366,125 @@ void HeapSort(vector<int>& arr)
 #+END_SRC
 
 * 插入排序
+插入排序的基本思路是：
+  - 单个元素的序列是有序序列
+  - 依次将后续元素插入到前面的有序序列
 
-* 希尔排序
+怎么将元素插入到前面的有序序列？\\
+一种方法是通过交换，前面的元素较大则交换，一直往前交换到不大于的元素为止。
+
+#+BEGIN_SRC cpp
+void InsertSortV1(int arr[], int size)
+{
+    for (int idx=1; idx<size; idx++)
+    {
+        for (int pos=idx; 0<pos; pos--)
+        {
+            if (arr[pos-1] <= arr[pos])
+            {
+                break;
+            }
+
+            swap(arr[pos-1], arr[pos]);
+        }
+    }
+}
+#+END_SRC
+
+另外一种方法就是通过后移腾出空位，效率更高，不过编码容易出错。
+
+#+BEGIN_SRC cpp
+void InsertSortV2(int arr[], int size)
+{
+    for (int idx=1; idx<size; idx++)
+    {
+        int backup = arr[idx];
+        int pos = idx;
+
+        while (0<pos)
+        {
+            if (arr[pos-1] <= backup)
+            {
+                break;
+            }
+
+            // 一边后移腾出空位，一边搜索合适位置
+            arr[pos] = arr[pos-1];
+
+            pos--;
+        }
+        // 1) pos==0，前面没有元素可比较，直接插入
+        // 2) pos>0 && arr[pos-1] <= backup
+        arr[pos] = backup;
+    }
+}
+#+END_SRC
 
 * 选择排序
+选择排序的思路是：
+  1. 初始时，序列为无序区间[0, size)，idx==0
+  2. 在无序区间[idx, size)中选取最小的元素，将其与arr[idx]交换形成有序区间[0, idx]
+  3. 重复第2步直到无序区间为空
+
+#+BEGIN_SRC cpp
+void SelectSort(int arr[], int size)
+{
+    for (int idx=0; idx<size; idx++)
+    {
+        int min = idx;
+
+        for (int pos=idx+1; pos<size; pos++)
+        {
+            if (arr[min] > arr[pos])
+            {
+                min = pos;
+            }
+        }
+
+        swap(arr[idx], arr[min]);
+    }
+}
+#+END_SRC
+
+* 希尔(Shell)排序
+希尔排序是分组+插入排序。
+
+版本一：
+
+#+BEGIN_SRC cpp
+void ShellSortV1(int arr[], int size)
+{
+    for (int gap=size/2; 0<gap; gap/=2)
+    {
+        for (int group=0; group<gap; group++)
+        {
+            for (int idx=group+gap; idx<size; idx+=gap)
+            {
+                for (int pos=idx; 0<pos && arr[pos-gap]>arr[pos]; pos-=gap)
+                {
+                    swap(arr[pos-gap], arr[pos]);
+                }
+            }
+        }
+    }
+}
+#+END_SRC
+
+从gap开始，每个元素与自己分组内的元素进行插入排序。\\
+版本二：
+
+#+BEGIN_SRC cpp
+void ShellSortV2(int arr[], int size)
+{
+    for (int gap=size/2; 0<gap; gap/=2)
+    {
+        for (int idx=gap; idx<size; idx++)
+        {
+            for (int pos=idx; 0<pos && arr[pos-gap]>arr[pos]; pos-=gap)
+            {
+                swap(arr[pos-gap], arr[pos]);
+            }
+        }
+    }
+}
+#+END_SRC
