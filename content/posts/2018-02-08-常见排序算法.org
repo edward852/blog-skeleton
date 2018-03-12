@@ -488,3 +488,68 @@ void ShellSortV2(int arr[], int size)
     }
 }
 #+END_SRC
+
+* 基数排序/RadixSort/BucketSort
+基数排序(LSD最低位优先)是依次按位数(个,十,百,千,万...)将元素放入0~9号通中排成新序列，最终完成排序。
+
+#+BEGIN_SRC cpp
+int maxDigits(int arr[], int size)
+{
+    int d = 1;
+    int r = 10;
+
+    for (int idx=0; idx<size; idx++)
+    {
+        if (arr[idx] >= r)
+        {
+            d++;
+            r *= 10;
+        }
+    }
+
+    return d;
+}
+
+void RadixSort(int arr[], int size)
+{
+    int digits = maxDigits(arr, size);
+    unique_ptr<int[]> tmp(new int[size]);
+    int radix = 1;
+#define DIGITS_CNT (10)
+
+    for (int idx=0; idx<digits; idx++)
+    {
+        int cnt[DIGITS_CNT] = {};
+
+        for (int pos=0; pos<size; pos++)
+        {
+            int digit = (arr[pos]/radix) % 10;
+
+            cnt[digit]++;
+        }
+
+        for (int pos=1; pos<DIGITS_CNT; pos++)
+        {
+            cnt[pos] += cnt[pos-1];
+        }
+
+        // start from the end
+        for (int pos=size-1; 0<=pos; pos--)
+        {
+            int digit = (arr[pos]/radix) % 10;
+
+            tmp[cnt[digit]-1] = arr[pos];
+            cnt[digit]--;
+        }
+
+        for (int pos=0; pos<size; pos++)
+        {
+            arr[pos] = tmp[pos];
+        }
+
+        radix *= 10;
+    }
+}
+#+END_SRC
+
+
