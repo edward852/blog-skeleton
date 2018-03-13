@@ -186,3 +186,4 @@ pre.sourceCode.latex:before     { content: 'LaTeX'; }
 pre.sourceCode.perl:before     { content: 'Perl'; }
 pre.sourceCode.python:before     { content: 'Python'; }
 pre.sourceCode.ruby:before     { content: 'Ruby'; }
+pre.sourceCode.sql:before { content: 'SQL'; }
