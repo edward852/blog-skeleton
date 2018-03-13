@@ -490,8 +490,61 @@ void ShellSortV2(int arr[], int size)
 #+END_SRC
 
 * 基数排序/RadixSort/BucketSort
-基数排序(LSD最低位优先)是依次按位数(个,十,百,千,万...)将元素放入0~9号通中排成新序列，最终完成排序。
+基数排序(LSD最低位优先)是依次按位数(个,十,百,千,万...)将元素放入0~9号通中排成新序列，最终完成排序。\\
+首先我们按照正常思维实现：
 
+#+BEGIN_SRC cpp
+int maxDigits(vector<int> &nums)
+{
+    int d = 1;
+    int r = 10;
+
+    auto maxItr = max_element(nums.begin(), nums.end());
+    if (maxItr != nums.end())
+    {
+        auto maxNum = *maxItr;
+
+        while (maxNum >=r)
+        {
+            maxNum /= r;
+            d++;
+        }
+    }
+
+    return d;
+}
+
+void RadixSort(vector<int> &nums)
+{
+    int digits = maxDigits(nums);
+    int radix = 1;
+
+    while (digits--)
+    {
+        vector<vector<int>> buckets(10);
+
+        for (auto n: nums)
+        {
+            int digit = (n/radix) % 10;
+
+            buckets[digit].push_back(n);
+        }
+
+        int idx = 0;
+        for (auto &v: buckets)
+        {
+            for (auto n: v)
+            {
+                nums[idx++] = n;
+            }
+        }
+
+        radix *= 10;
+    }
+}
+#+END_SRC
+
+通过 ~partial_sum~ 我们可以在静态数组上实现，而不用动态数组。
 #+BEGIN_SRC cpp
 int maxDigits(int arr[], int size)
 {
