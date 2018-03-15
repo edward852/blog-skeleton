@@ -32,7 +32,7 @@
                 </div>
             </div>
             <div class="ui hidden divider"></div>
-            <div class="page content">
+            <div class="page content" data-iframe-height>
                 <div class="ui main container">
                     <%= yield %>
                 </div>
@@ -40,7 +40,7 @@
             </div>
             <div class="ui hidden divider placeholder"></div>
 
-            <footer class="ui inverted vertical center aligned segment" data-iframe-height>
+            <footer class="ui inverted vertical center aligned segment">
                 <div class="ui container">
                     <script type="text/javascript">
                     document.write("<p>Copyright © 2011-xxxx by 时聆心语&nbsp;&nbsp;·&nbsp;&nbsp;Powered by Nanoc, Pandoc, Semantic UI, Travis CI, GitHub Pages, etc.</p>".replace('xxxx', new Date().getFullYear()));
