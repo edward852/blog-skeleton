@@ -7,7 +7,7 @@
     </div>
     <div class="ui blue segment">
         <% @items.find_all('/tags/*').each do |tag_item| %>
-        <h2 class="ui header"><i class="tag icon"></i><div class="content"><%= link_to tag_item[:tag], tag_item.path %></div></h2>
+        <h2 class="ui header"><i class="tag icon"></i><div class="content"><%= link_to tag_item[:tag], tag_item.path %><sup><%= tag_item[:ref] %></sup></div></h2>
         <% end %>
         <div class="ui hidden divider"></div>
     </div>
