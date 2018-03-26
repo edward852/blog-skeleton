@@ -1,0 +1,198 @@
+# -*- coding: utf-8 -*-
+#+TITLE:通用代码编辑器Spacemacs
+#+AUTHOR: 时聆心语
+#+DATE:<2018-03-24 Sat 22:15>
+#+UPDATED_AT:<2018-03-24 Sat 22:15>
+#+TAGS: Spacemacs SourceInsight
+#+OPTIONS: ^:nil
+* 简介
+自从 [[http://spacemacs.org/][spacemacs]] 横空出世之后，最好的代码编辑器已经不再是Emacs或者Vim，而是二者合一！
+
+#+BEGIN_QUOTE
+The best editor is neither Emacs nor Vim, it's Emacs and Vim!
+#+END_QUOTE
+虽然说Source Insight对于广大人群来讲更加简单、好用，但是熟悉spacemacs后你会更加爱不释手。\\
+简单来说，使用spacemacs只要键盘即可，无需鼠标，可以极大提高效率。
+
+* 安装
+** Emacs
+spacemacs是对Emacs的扩展，所以要求先安装24.4版本以上的Emacs。比较简单，不赘述。
+** 默认安装
+按照 [[https://github.com/syl20bnr/spacemacs#install][官方说明]] 安装即可，基本上只要把代码clone下来后重新打开Emacs就可以自动完成后续操作。
+
+* 新手指引
+** 模式
+由于采用Emacs+Vim，所以存在Emacs模式和Vim模式。\\
+怎么区分呢？很简单，通过左下角和光标的颜色即可区分。\\
+黄色代表Vim模式：\\
+[[../assets/images/180324_vim_mode.jpg]]
+
+蓝色代表Emacs模式：\\
+[[../assets/images/180324_emacs_mode.jpg]]
+
+通过 ~ESC~ 按键进入Vim模式，通过 ~a~ 或 ~i~ (Vim下能进入编辑模式的按键皆可)进入Emacs模式。\\
+简单来说，Vim的编辑模式对应Emacs模式。
+
+** 按键/快捷键
+为了下文说明的方便，约定如下按键缩写：
+| 按键缩写 | 实际按键 |
+|----------+----------|
+| SPC      | space    |
+| C        | ctrl     |
+| M        | alt      |
+| S        | shift    |
+
+Spacemacs许多命令的快捷键都是以空格键 ~SPC~ 开始的，所以才叫spacemacs。^_^\\
+举例来说，按键序列 ~SPC j j~ 表示先按空格键，然后按两下 ~j~ 。\\
+当你按下空格键后，后续可选的按键就会在下方弹出提示。
+
+#+ATTR_HTML: :width 100%
+[[../assets/images/180324_spc_leader_key.jpg]]
+
+当你发现按错(或者操作错误)的时候，一般都可以通过按几次 ~ESC~ (或者 ~C-g~)取消操作。\\
+此时你可能在担心按键太多记不住怎么办，别担心，快捷键是有规律的。\\
+大家都知道，记住有规律的、有含义的东西是容易的，而spacemacs的快捷键就是按照操作分类的。\\
+比如说，以 ~SPC f~ 开始的快捷键表示文件相关的命令，其中 ~f~ 代表的是file。\\
+相关的命令包括：打开文件 ~SPC f f~ 、保存文件 ~SPC f s~ 等等，是不是很好记？
+
+[[../assets/images/180324_file_shortcut.jpg]]
+
+以 ~SPC m~ (或者更简短的 ~,~)开始的快捷键表示主模式相关的命令，其中 ~m~ 代表的是mode。\\
+主模式(Major Mode)随着当前代码语言的改变而改变，比如说C/C++对应主模式为CC Mode。\\
+如果大家对于Emacs或者Vim基本按键不熟的话，请先自学再继续阅读下文。\\
+通过按键 ~C-h t~ 也就是ctrl+h再按t键即可打开Emacs自带的教程。
+
+** 命令
+
+虽然说spacemacs的常用快捷键好记，但是还有许多快捷键我们不知道或者忘记了。\\
+好消息是我们完全没有必要记住，记住常用的即可，其它可以通过输入命令执行。\\
+当然我们也没必要记住命令的精确名字，因为我们可以通过模糊匹配的方式找到命令并执行。\\
+比如说我们想选中当前函数，但是不知道快捷键是什么，怎么办呢？\\
+在spacemacs选中的命令一般都含有mark，而函数的英文是function。\\
+执行命令的快捷键是 ~SPC SPC~ (Linux)或者 ~SPC :~ (Mac)。\\
+于是我们尝试输入mark func，输入过程中(mark fun)可以看到只有两个匹配了。
+[[../assets/images/180324_mark_func.gif]]
+
+实际上这两个命令都可以满足我们的需求，所以任选一个执行即可。\\
+另外我们还看到选中当前函数的快捷键是 ~C-M-h~ ，也就是ctrl+alt+h。\\
+如果对你来说这个操作很常用，那么就可以趁这个机会顺便记住了。\\
+正是因为查找命令支持模糊匹配，所以我们只需记住几个关键字即可。\\
+查找命令还会记住你的使用频率，按照使用频率和匹配程度自动排序。\\
+也就是说，经常使用的话，你甚至可以只输入 ~mf~ 选中当前函数的命令就会自动排第一。\\
+下文的操作将会尽量同时提供快捷键和命令，大家根据自己的习惯和记忆力选取适合自己的进行记忆即可。
+
+** 配置文件
+| 快捷键    | 助记               | 命令(支持模糊匹配) | 操作         |
+| SPC f e d | file emacs dotfile | find dotfile       | 打开配置文件 |
+| SPC f e R | file emacs reload  | sync config        | 重新加载配置 |
+Spacemacs大部分的配置都在 ~.spacemacs~ 文件，所以通常我们修改配置就是修改这个文件，然后重新加载。
+另外配置文件采用Elisp(Emacs Lisp)语言，注意符合语法，特别不要出现括号不匹配的情况。
+** 帮助
+Spacemacs带有许多帮助功能，所以在寻求外部帮助之前，我们可以先看看是否可以通过帮助功能解决。
+| 快捷键    | 助记                   | 命令(支持模糊匹配)   | 操作           |
+| SPC h d f | help describe function | describe function    | 查询函数(命令) |
+| SPC h d k | help describe key      | describe key         | 查询按键       |
+| SPC h d m | help describe mode     | describe mode        | 查询模式       |
+| SPC h d v | help describe variable | describe variable    | 查询变量       |
+| SPC h SPC | help spacemacs         | spacemacs help       | spacemacs帮助  |
+| SPC h l   | help layer             | spacemacs layer help | layer帮助      |
+| ...       |                        |                      |                |
+
+* 操作与配置
+下面介绍代码编辑、浏览的操作，部分操作可能需要配置以达到最佳效果。\\
+另外后面默认使用Emacs和Vim混合风格，需要在 ~.spacemacs~ 文件设置好(快捷键 ~SPC f e d~ )。
+#+BEGIN_SRC emacs-lisp
+(setq-default
+ ;;
+ dotspacemacs-editing-style 'hybrid
+ ;;
+ )
+#+END_SRC
+
+** 滚动浏览
+通常我们都会通过鼠标滚轮来上下浏览代码，在spacemacs我们只需要一两个按键即可。\\
+首先我们需要配置开启全局居中：
+#+BEGIN_SRC emacs-lisp
+(defun dotspacemacs/user-config ()
+ ;;
+ (spacemacs/toggle-centered-point-globally-on)
+ ;;
+ )
+#+END_SRC
+然后通过Vim风格由hjkl控制移动，也就是通过按 ~j~ 往下滚动一行，按 ~k~ 往上滚动一行。 \\
+需要滚动多行怎么办？前面加数字即可，比如说往下滚动5行，按 ~5 j~ 即可，简单吧？
+
+| 快捷键  | 命令(支持模糊匹配) | 操作         |
+| j       | next line          | 往下滚动一行 |
+| k       | prev line          | 往上滚动一行 |
+| {1-9} j |                    | 往下滚动N行  |
+| {1-9} k |                    | 往上滚动N行  |
+
+[[../assets/images/180324_scrolling.gif]]
+
+** 跳转
+*** 跳到指定字符
+还在用鼠标移动光标？来试试spacemacs简单、快速、精准的跳转吧。\\
+~SPC j j~ 可以通过两三下按键即可跳转到视线范围内任意字符(支持中文，通过拼音首字母)。
+
+| 快捷键  | 助记      | 命令(支持模糊匹配) | 操作               |
+| SPC j j | jump jump | goto char          | 跳到视线范围内字符 |
+
+[[../assets/images/180324_jump_char.gif]]
+
+如上图所示，假设我们想跳到tcp_timer中timer的t字符。\\
+首先输入 ~SPC j j~ 以及 ~t~ ，然后依次输入timer位置提示的字符 ~h d~ 即可。
+
+*** 跳到指定行
+~SPC j l~ 可以通过一两下按键即可跳转到指定行。
+
+| 快捷键  | 助记      | 命令(支持模糊匹配) | 操作       |
+| SPC j l | jump line | goto line          | 跳到指定行 |
+
+[[../assets/images/180324_jump_line.gif]]
+
+当然 ~SPC j l~ 可以指定具体的行号，比如说100。\\
+所以跳转到文件开头和结尾也可以通过跳转到第1行、第9999行实现。
+
+*** 跳到定义
+跟具体代码语言有关，以C/C++为例，安装gtags layer后即可通过 ~SPC m g d~ 跳转。
+*** 跳到书签
+m{a-zA-Z} 小写字母保存当前文件有效的书签 大写字母保存全局范围书签\\
+`{a-zA-Z} ~`~ 加上之前设置的字母即可跳到对应的书签\\
+~``~ 可回到上一次跳转前的位置
+*** 回到跳转前
+方法一就是跳转前设置书签(见上一小节)，最好设置全局书签。
+** 搜索
+*** 搜索字符串
+通过 ~SPC s s~ 即可在当前文件中搜索。\\
+按工程搜索
+*** 搜索文件
+** 替换
+*** 当前文件替换
+*** 工程全局替换
+** 选择区域/复制粘贴
+** 保存
+** 删除
+
+** 标签页?
+在打开的文件间切换？ ~SPC Tab~ 和 ~SPC b b~ 即可。
+
+** 多窗口
+
+** 自动补全
+
+** 自动对齐
+code style.
+
+** 工程
+** man手册
+| 快捷键  | 命令(支持模糊匹配) |
+| SPC h m | help manual        |
+
+~SPC h m~ 
+** shell
+** 拼写检查spelling
+** undo/redo
+
+** 高亮
+** smart rename/重构
