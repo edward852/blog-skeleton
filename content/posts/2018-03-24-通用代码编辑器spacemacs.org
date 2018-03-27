@@ -85,7 +85,8 @@ Spacemacs许多命令的快捷键都是以空格键 ~SPC~ 开始的，所以才�
 | 快捷键    | 助记               | 命令(支持模糊匹配) | 操作         |
 | SPC f e d | file emacs dotfile | find dotfile       | 打开配置文件 |
 | SPC f e R | file emacs reload  | sync config        | 重新加载配置 |
-Spacemacs大部分的配置都在 ~.spacemacs~ 文件，所以通常我们修改配置就是修改这个文件，然后重新加载。
+| SPC f s   | file save          | save buffer        | 保存文件     |
+Spacemacs的配置基本都在 ~.spacemacs~ 文件，所以通常我们修改配置文件并保存，然后重新加载。\\
 另外配置文件采用Elisp(Emacs Lisp)语言，注意符合语法，特别不要出现括号不匹配的情况。
 ** 帮助
 Spacemacs带有许多帮助功能，所以在寻求外部帮助之前，我们可以先看看是否可以通过帮助功能解决。
@@ -154,18 +155,39 @@ Spacemacs带有许多帮助功能，所以在寻求外部帮助之前，我们�
 当然 ~SPC j l~ 可以指定具体的行号，比如说100。\\
 所以跳转到文件开头和结尾也可以通过跳转到第1行、第9999行实现。
 
-*** 跳到定义
-跟具体代码语言有关，以C/C++为例，安装gtags layer后即可通过 ~SPC m g d~ 跳转。
+*** 跳到定义/引用
+跟具体代码语言有关，通常需要代码tagging系统的支持才行。\\
+推荐安装 [[http://www.gnu.org/software/global/][GNU GLOBAL]] ，支持大部分主流编程语言解析，具体使用参见在后面 [[#tagging][GNU GLOBAL]] 章节。\\
+以C/C++为例，安装完GLOBAL之后再加载gtags layer即可通过 ~SPC m g d~ 跳转到定义。
+*** 局部变量定义、使用位置之间跳转
+详见后面 [[#highlight][高亮]] 章节。
+
 *** 跳到书签
-m{a-zA-Z} 小写字母保存当前文件有效的书签 大写字母保存全局范围书签\\
-`{a-zA-Z} ~`~ 加上之前设置的字母即可跳到对应的书签\\
-~``~ 可回到上一次跳转前的位置
+| 快捷键     | 助记 | 命令(支持模糊匹配) | 操作               |
+| m {a-zA-Z} | mark | set marker         | 设置书签           |
+| ` {a-zA-Z} |      | goto mark          | 跳到书签           |
+| ``         |      | goto mark          | 跳回最近设置的书签 |
+|            |      | show marks         | 显示所有书签       |
+~m~ +小写字母设置当前文件有效的书签，只能在当前文件内跳转。\\
+~m~ +大写字母设置全局有效的书签，支持跨文件跳转。\\
+~`~ +之前设置的字母即可跳到对应的书签。\\
+~``~ 跳回最近设置的书签。\\
+~evil-show-marks~ 命令可以显示所有书签，通过show mark关键字即可搜索到该命令。
+
 *** 回到跳转前
-方法一就是跳转前设置书签(见上一小节)，最好设置全局书签。
+方法一就是跳转前设置书签(见上一小节)，推荐设置全局书签。该方法有些麻烦，不过比较通用。\\
+方法二主要是针对跳转定义/引用这种情况，以GLOBAL(gtags)来说会保存跳转历史，支持前后跳转。
+
 ** 搜索
 *** 搜索字符串
-通过 ~SPC s s~ 即可在当前文件中搜索。\\
-按工程搜索
+通过 ~SPC s s~ 快捷键即可在当前文件中搜索。\\
+
+[[../assets/images/180324_search_swoop.gif]]
+
+比如说我们想在当前文件搜索 ~tcp_tmr~ (跳转定义有其它快捷键，这里只是举例)。\\
+随着我们的输入，匹配的行越来越少，当我们确定234行的搜索结果就是想要的结果时可以加上行号进行搜索。\\
+在工程范围内搜索，请参见后面的 [[#project][工程]] 章节。
+
 *** 搜索文件
 ** 替换
 *** 当前文件替换
@@ -184,7 +206,7 @@ m{a-zA-Z} 小写字母保存当前文件有效的书签 大写字母保存全局
 ** 自动对齐
 code style.
 
-** 工程
+** 工程 <<project>>
 ** man手册
 | 快捷键  | 命令(支持模糊匹配) |
 | SPC h m | help manual        |
@@ -194,5 +216,41 @@ code style.
 ** 拼写检查spelling
 ** undo/redo
 
-** 高亮
+** 高亮 <<highlight>>
+通过 ~SPC s h~ 快捷键可以高亮变量。\\
+在高亮模式下， ~n~ 键可以跳到下一使用位置， ~p~ 键可以跳到上一使用位置， ~d~ 可以跳到定义位置。\\
+通过 ~SPC s c~ 快捷键可以取消高亮。
+
+[[../assets/images/180324_highlight.gif]]
+
 ** smart rename/重构
+
+* 代码标记系统GNU GLOBAL(gtags) <<tagging>>
+** 安装GLOBAL(gtags)
+在官方 [[http://www.gnu.org/software/global/download.html][下载页面]] 根据自己的系统下载安装即可。
+** gtags layer
+把gtags添加到dotspacemacs-configuration-layers以启用gtags layer。
+#+BEGIN_SRC emacs-lisp
+dotspacemacs-configuration-layers
+   '(
+     ;;
+     c-c++
+     gtags
+     ;;
+     )
+#+END_SRC
+** 创建tags文件
+为了能够正常使用gtags提供的功能(比如说跳转)，需要先生成tags文件(一个工程一次即可)。\\
+通过 ~SPC m g c~ 快捷键可以给当前工程创建tags文件，注意要在工程根目录下执行该命令。\\
+通过 ~SPC m g u~ 快捷键可以增量更新当前工程的tags文件。
+
+** 跳转到定义/引用
+通过 ~SPC m g d~ 快捷键可以跳转到定义。\\
+通过 ~SPC m g r~ 快捷键可以跳转到引用。
+
+[[../assets/images/180324_gtags_goto.gif]]
+
+** 前后跳转
+通过 ~SPC m g p~ 快捷键可以跳到跳转历史中上一处跳转。\\
+通过 ~SPC m g n~ 快捷键可以跳到跳转历史中下一处跳转。\\
+
