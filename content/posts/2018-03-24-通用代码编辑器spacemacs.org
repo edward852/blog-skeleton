@@ -189,6 +189,8 @@ Spacemacs带有许多帮助功能，所以在寻求外部帮助之前，我们�
 在工程范围内搜索，请参见后面的 [[#project][工程]] 章节。
 
 *** 搜索文件
+在工程范围内搜索文件，请参见后面的 [[#project][工程]] 章节。
+
 ** 替换
 *** 当前文件替换
 *** 工程全局替换
@@ -207,6 +209,40 @@ Spacemacs带有许多帮助功能，所以在寻求外部帮助之前，我们�
 code style.
 
 ** 工程 <<project>>
+工程主要是通过 [[https://github.com/bbatsov/projectile][Projectile]] 实现的，Projectile定义的工程很简单，就是含有特殊文件的目录。
+
+*** 新建工程
+你可以手动创建新的工程，需要做的只是在工程根目录下新建一个空的 ~.projectile~ 文件即可，so easy。\\
+另外如果你的工程是通过Git管理的，那么无需额外的操作你的工程就会自动识别为工程。
+
+*** 搜索文件
+通过 ~SPC p f~ 快捷键可以搜索并打开工程内的文件。
+
+| 快捷键  | 助记         | 命令(支持模糊匹配) | 操作             |
+| SPC p f | project find | project find file  | 搜索工程内的文件 |
+
+*** 搜索字符串
+通过 ~SPC s p~ 或者 ~SPC /~ 以正则表达式搜索工程内的字符串。
+| 快捷键  | 助记           | 命令(支持模糊匹配) | 操作               |
+| SPC s p | search project | project search     | 搜索工程内的字符串 |
+
+[[../assets/images/180324_project_search.gif]]
+
+上图展示了如何搜索slow start实现的代码。
+
+*** 替换
+通过 ~SPC p R~ 或者 ~SPC p %~ 快捷键可以替换工程内的字符串，后者支持正则表达式。
+
+| 快捷键  | 助记            | 命令(支持模糊匹配)    | 操作                             |
+| SPC p R | project replace | project replace       | 替换工程内字符串                 |
+| SPC p % |                 | project regex replace | 替换工程内匹配正则表达式的字符串 |
+
+*** 文件导航树
+通过 ~SPC p t~ 快捷键可以打开工程的文件导航树，与Source Insight的工程文件列表类似。\\
+可以偶尔看看工程的目录结构，平时还是关闭了吧，节约空间。
+
+[[../assets/images/180324_project_neotree.gif]]
+
 ** man手册
 | 快捷键  | 命令(支持模糊匹配) |
 | SPC h m | help manual        |
