@@ -35,12 +35,13 @@ spacemacs是对Emacs的扩展，所以要求先安装24.4版本以上的Emacs。
 
 ** 按键/快捷键
 为了下文说明的方便，约定如下按键缩写：
-| 按键缩写 | 实际按键 |
-|----------+----------|
-| SPC      | space    |
-| C        | ctrl     |
-| M        | alt      |
-| S        | shift    |
+| 按键缩写 | 实际按键  |
+|----------+-----------|
+| SPC      | space     |
+| C        | ctrl      |
+| M        | alt       |
+| S        | shift     |
+| DEL      | backspace |
 
 Spacemacs许多命令的快捷键都是以空格键 ~SPC~ 开始的，所以才叫spacemacs。^_^\\
 举例来说，按键序列 ~SPC j j~ 表示先按空格键，然后按两下 ~j~ 。\\
@@ -181,6 +182,10 @@ Spacemacs带有许多帮助功能，所以在寻求外部帮助之前，我们�
 ** 搜索
 *** 搜索字符串
 通过 ~SPC s s~ 快捷键即可在当前文件中搜索。\\
+该搜索命令还有个好处就是，在搜索结果中上下切换时会自动跳转到对应行，方便确认是否所需结果。
+
+| 快捷键  | 助记         | 命令(支持模糊匹配) | 操作       |
+| SPC s s | search swoop | swoop              | 搜索字符串 |
 
 [[../assets/images/180324_search_swoop.gif]]
 
@@ -267,9 +272,35 @@ Vim模式下通过 ~%~ 键可以跳到配对的内容，比如说括号 ~(){}[]~
 | SPC f t | file tree          | 打开文件导航树 |
 
 ** 删除
+*** 删除字符
+| 快捷键 | 模式  | 命令(支持模糊匹配)   | 操作         |
+| x      | Vim   | delete char          | 删除字符(光标后) |
+| C-d    | Emacs | delete char          | 删除字符(光标后) |
+| DEL    | Emacs | delete backward char | 删除字符(光标前) |
 
-** 标签页?
-在打开的文件间切换？ ~SPC Tab~ 和 ~SPC b b~ 即可。
+*** 删除单词
+| 快捷键 | 模式  | 命令(支持模糊匹配) | 操作             |
+| dw     | Vim   | delete word        | 删除单词(光标后) |
+| M-d    | Emacs | kill word          | 删除单词(光标后) |
+| M-DEL  | Emacs | kill backward word | 删除单词(光标前) |
+
+*** 删除行
+| 快捷键  | 模式  | 命令(支持模糊匹配) | 操作               |
+| dd      | Vim   | delete line        | 删除当前行         |
+| C-S-DEL | Emacs | kill whole line    | 删除当前行         |
+| C-k     | Emacs | kill line          | 删除光标到行尾内容 |
+
+** 标签页
+通常我们通过点击标签页来切换不同的文件。虽然有ctrl+tab快捷键，但是文件打开多了之后，又聊胜于无。\\
+实际上切换可以更简单，就是我们指定文件名然后切换。当然文件名支持模糊匹配，只需要几个关键字即可。
+
+| 快捷键  | 助记          | 命令(支持模糊匹配) | 操作           |
+| SPC tab | tab           | alternate buffer   | 切换到上一文件 |
+| SPC b b | buffer buffer | helm-mini          | 切换到指定文件 |
+
+[[../assets/images/180324_buffer_switch.gif]]
+
+上图展示了如何在打开多个文件(ip.c ip4.c ip6.c等)的情况下切换到tcp.c。
 
 ** 多窗口
 
