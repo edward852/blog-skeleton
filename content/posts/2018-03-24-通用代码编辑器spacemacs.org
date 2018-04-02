@@ -304,10 +304,71 @@ Vim模式下通过 ~%~ 键可以跳到配对的内容，比如说括号 ~(){}[]~
 
 ** 多窗口
 
-** 自动补全
+** 注释
+*** 添加注释
 
-** 自动对齐
-code style.
+| 快捷键 | 命令(支持模糊匹配) | 操作 |
+| M-;    | comment dwim       | 添加注释   |
+
+*** 注释掉当前行
+| 快捷键  | 命令(支持模糊匹配) | 操作                           |
+| C-x C-; | comment line       | 注释掉当前行，再次执行取消注释 |
+
+*** 注释掉区域
+| 命令(支持模糊匹配)     | 操作         |
+| comment region         | 注释掉区域   |
+| SPC u + comment-region | 取消注释区域 |
+
+** 自动补全
+自动补全是通过启用auto-complete layer实现的。
+
+#+BEGIN_SRC emacs-lisp
+(setq-default dotspacemacs-configuration-layers
+  '(
+  ;;
+  (auto-completion :variables
+                   auto-completion-enable-sort-by-usage t
+                   auto-completion-enable-snippets-in-popup t)
+  ;;
+  ))
+#+END_SRC
+
+如果是C/C++的话，建议开启Clang支持，能够提供更精确的补全。该功能需要先安装Clang。
+
+#+BEGIN_SRC emacs-lisp
+(setq-default dotspacemacs-configuration-layers
+  '((c-c++ :variables c-c++-enable-clang-support t)))
+#+END_SRC
+
+[[../assets/images/180324_auto_complete.gif]]
+
+** 自动对齐/格式化
+自动对齐涉及编码风格，比如说tab长度是2还是4。\\
+自动对齐主要操作就是按tab键，可以选中区域也可以不选中。虽然操作简单，但是背后的配置就不是那么简单。\\
+这里主要说明如何配置C/C++的对齐。可以先参考 [[https://www.emacswiki.org/emacs/IndentingC][Indenting C]] 的说明。\\
+Emacs自带 ~c-guess-buffer-no-install~ 命令可以根据当前文件的内容推断出一些对齐规则。\\
+通过 ~c-guess-view~ 命令可以查看推断出来的对齐规则，然后根据我们自己的需要酌情修改。\\
+另外还可以通过 [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] 对代码进行格式化，当然需要先安装clang-format。\\
+clang-format可以根据 ~.clang-format~ 文件进行格式化，创建 ~.clang-format~ 文件最简单的方法如下：
+
+#+BEGIN_SRC bash
+clang-format -style=WebKit -dump-config > .clang-format
+#+END_SRC
+
+然后根据 [[http://clang.llvm.org/docs/ClangFormatStyleOptions.html][Style Options]] 以及我们的需求进行修改。\\
+配置完成后可以通过 ~clang-format-region~ 或者 ~clang-format-buffer~ 选择性地格式化代码。\\
+当然你还可以绑定快捷键到tab：
+
+#+BEGIN_SRC emacs-lisp
+;; Bind clang-format-region to C-M-tab in all modes:
+(global-set-key [C-M-tab] 'clang-format-region)
+;; Bind clang-format-buffer to tab on the c++-mode only:
+(add-hook 'c++-mode-hook 'clang-format-bindings)
+  (defun clang-format-bindings ()
+    (define-key c++-mode-map [tab] 'clang-format-buffer))
+#+END_SRC
+
+[[../assets/images/180324_auto_indent.gif]]
 
 ** 工程 <<project>>
 工程主要是通过 [[https://github.com/bbatsov/projectile][Projectile]] 实现的，Projectile定义的工程很简单，就是含有特殊文件的目录。
