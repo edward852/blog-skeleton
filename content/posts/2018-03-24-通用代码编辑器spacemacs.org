@@ -303,6 +303,34 @@ Vim模式下通过 ~%~ 键可以跳到配对的内容，比如说括号 ~(){}[]~
 上图展示了如何在打开多个文件(ip.c ip4.c ip6.c等)的情况下切换到tcp.c。
 
 ** 多窗口
+有时候我们希望同时打开多个窗口，以便对比、参考。\\
+Spacemacs定义了一系列以 ~SPC w~ 开头的快捷键，表示window相关的操作。
+
+*** 新建窗口
+| 快捷键               | 命令(支持模糊匹配)      | 操作         |
+| SPC w - 或者 SPC w s | window split below      | 下方新建窗口 |
+| SPC w / 或者 SPC w v | window split vertically | 右侧新建窗口 |
+创建两个以上窗口只需要重复上述操作即可。
+
+*** 窗口导航
+[[../assets/images/180324_window_num.jpg]]
+
+每个窗口都会有一个数字编号，显示在左下角。当我们想跳转到某个窗口时，只要 ~SPC~ 加上对应编号即可。
+
+| 快捷键    | 命令(支持模糊匹配) | 操作                          |
+| SPC {0-9} | select window      | 选择/跳转到对应数字编号的窗口 |
+
+[[../assets/images/180324_window_nav.gif]]
+
+*** 最大化窗口
+当我们想集中注意到某个窗口时，一般我们会选择最大化该窗口。
+
+| 快捷键  | 命令(支持模糊匹配)      | 操作           |
+| SPC w m | window(buffer) maximize | 最大化当前窗口 |
+
+*** 关闭窗口
+| 快捷键  | 命令(支持模糊匹配) | 操作     |
+| SPC w d | window delete      | 关闭窗口 |
 
 ** 注释
 *** 添加注释
@@ -341,6 +369,8 @@ Vim模式下通过 ~%~ 键可以跳到配对的内容，比如说括号 ~(){}[]~
 #+END_SRC
 
 [[../assets/images/180324_auto_complete.gif]]
+
+~.clang_complet~ 文件。
 
 ** 自动对齐/格式化
 自动对齐涉及编码风格，比如说tab长度是2还是4。\\
@@ -412,12 +442,48 @@ clang-format -style=WebKit -dump-config > .clang-format
 通过 ~SPC h m~ 快捷键可以在spacemacs上浏览manual手册，复用spacemacs强大而又通用的搜索、跳转。\\
 再也不用另外记住man的快捷键，一套通用的快捷键足以。
 
-由于spacemacs实际上也是通过man命令打开，所以某些系统的man命令可能不支持 ~-l~ 选项。\\
-上述问题可以通过设置 ~helm-man-format-switches~ 变量解决。
+[[../assets/images/180324_man.gif]]
+
+上图展示了如何查看epoll的man手册，并且搜索trigger关键字定位到ET和LT的说明。\\
+另外由于spacemacs实际上也是通过man命令打开，所以某些系统的man命令可能不支持 ~-l~ 选项。\\
+上述问题可以通过设置 ~helm-man-format-switches~ 变量解决(去除不支持的选项)。
 
 ** shell
-** 拼写检查spelling
-** undo/redo
+执行shell命令可以通过快捷键 ~SPC !~ 。执行多条shell命令的话建议通过 ~eshell~ 操作，可以跨平台使用。
+使用 ~eshell~ 还可以复用spacemacs的快捷键，不用再额外打开终端。
+
+| 快捷键 | 命令(支持模糊匹配) | 操作                        |
+| SPC !  | shell command      | 执行shell命令               |
+|        | eshell             | 打开Elisp实现的类unix命令行 |
+
+** 语法检查
+通过flycheck以及Clang可以支持即时语法检查。在安装好Clang后，启用syntax-checking即可。
+
+#+BEGIN_SRC emacs-lisp
+(setq-default dotspacemacs-configuration-layers
+  '(
+  ;;
+  syntax-checking
+  ;;
+  ))
+#+END_SRC
+
+[[../assets/images/180324_syntax_check.gif]]
+
+上图展示了我们未引入queue头文件就使用队列时会出现的状况。\\
+可以看到语法检查能够即时通过红点提示我们有语法错误。\\
+通过 ~SPC e l~ 快捷键可以查看具体的错误以及位置。
+
+| 快捷键  | 命令(支持模糊匹配) | 操作         |
+| SPC e l | error list         | 列举错误信息 |
+
+** 撤消undo/重做redo
+当我们需要撤消或者重做时，通过undo-tree能够以可视化的方式进行选择操作。\\
+通过 ~SPC a u~ 快捷键可以执行 ~undo-tree-visualize~ 命令，然后选择撤消或者重做。\\
+在undo-tree中导航，可通过方向键或Emacs模式的上下左右按键(~C-p C-n C-b C-f~)，确定OK后按 ~q~ 退出。
+
+| 快捷键  | 命令(支持模糊匹配) | 操作       |
+| SPC a u | application undo   | 撤消或重做 |
 
 ** 高亮 <<highlight>>
 通过 ~SPC s h~ 快捷键可以高亮变量。\\
