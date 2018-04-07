@@ -493,6 +493,29 @@ clang-format -style=WebKit -dump-config > .clang-format
 [[../assets/images/180324_highlight.gif]]
 
 ** smart rename/重构
+*** smart rename
+| 快捷键  | 助记        | 命令(支持模糊匹配) | 操作                   |
+| SPC s e | symbol edit | iedit              | 同步编辑当前区域(变量) |
+
+通过 ~iedit mode~ 可以实现"智能"重命名变量的效果。\\
+可以通过 ~SPC s e~ 直接进入编辑模式，也可以通过 ~SPC s h~ 进入高亮模式后再按 ~e~ 进入。\\
+先进入高亮模式的话，可以通过 ~r~ 键切换作用范围(文档内、可视范围内、函数内)。\\
+同步编辑完成后，可以通过 ~ESC~ 或者 ~C-g~ 退出。
+
+[[../assets/images/180324_smart_rename.gif]]
+
+*** 重构
+通过 [[https://github.com/tuhdo/semantic-refactor][semantic-refactor]] 可以重构代码，包括自动生成代码(函数实现、Getter和Setters等)、重命名局部变量。\\
+该功能需要启用semantic layer才能正常使用。
+
+#+BEGIN_SRC emacs-lisp
+(setq-default dotspacemacs-configuration-layers
+  '(
+  ;;
+  semantic
+  ;;
+  ))
+#+END_SRC
 
 * 代码标记系统GNU GLOBAL(gtags) <<tagging>>
 ** 安装GLOBAL(gtags)
@@ -515,7 +538,9 @@ dotspacemacs-configuration-layers
 
 ** 跳转到定义/引用
 通过 ~SPC m g d~ 快捷键可以跳转到定义。\\
-通过 ~SPC m g r~ 快捷键可以跳转到引用。
+通过 ~SPC m g r~ 快捷键可以跳转到引用。\\
+引用的地方一般比较多，如果跳到其中一处引用之后想跳到下一处怎么办？\\
+可以通过 ~SPC m g R~ 恢复上次gtags命令，然后通过 ~↓~ 或者 ~C-n~ 选择下一处引用跳转。
 
 [[../assets/images/180324_gtags_goto.gif]]
 
