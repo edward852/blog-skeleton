@@ -2,7 +2,7 @@
 #+TITLE:通用代码编辑器Spacemacs
 #+AUTHOR: 时聆心语
 #+DATE:<2018-03-24 Sat 22:15>
-#+UPDATED_AT:<2018-03-24 Sat 22:15>
+#+UPDATED_AT:<2018-04-25 Wed 23:50> 
 #+TAGS: Spacemacs SourceInsight
 #+OPTIONS: ^:nil
 * 简介
@@ -122,13 +122,17 @@ Spacemacs带有许多帮助功能，所以在寻求外部帮助之前，我们�
  )
 #+END_SRC
 然后通过Vim风格由hjkl控制移动，也就是通过按 ~j~ 往下滚动一行，按 ~k~ 往上滚动一行。 \\
-需要滚动多行怎么办？前面加数字即可，比如说往下滚动5行，按 ~5 j~ 即可，简单吧？
+需要滚动多行怎么办？前面加数字即可，比如说往下滚动11行，按 ~11 j~ 即可，简单吧？
 
-| 快捷键  | 命令(支持模糊匹配) | 操作         |
-| j       | next line          | 往下滚动一行 |
-| k       | prev line          | 往上滚动一行 |
-| {1-9} j |                    | 往下滚动N行  |
-| {1-9} k |                    | 往上滚动N行  |
+| 快捷键   | 命令(支持模糊匹配) | 操作         |
+| j        | next line          | 往下滚动一行 |
+| k        | prev line          | 往上滚动一行 |
+| {数字} j |                    | 往下滚动N行  |
+| {数字} k |                    | 往上滚动N行  |
+| C-d      | scroll down        | 往下翻屏     |
+| C-u      | scroll up          | 往上翻屏     |
+| {        | backward paragraph | 上一段落     |
+| }        | forward paragraph  | 下一段落     |
 
 [[../assets/images/180324_scrolling.gif]]
 
@@ -160,8 +164,13 @@ Spacemacs带有许多帮助功能，所以在寻求外部帮助之前，我们�
 跟具体代码语言有关，通常需要代码tagging系统的支持才行。\\
 推荐安装 [[http://www.gnu.org/software/global/][GNU GLOBAL]] ，支持大部分主流编程语言解析，具体使用参见在后面 [[#tagging][GNU GLOBAL]] 章节。\\
 以C/C++为例，安装完GLOBAL之后再加载gtags layer即可通过 ~SPC m g d~ 跳转到定义。
-*** 局部变量定义、使用位置之间跳转
+*** 局部变量定义、使用位置间跳转
 详见后面 [[#highlight][高亮]] 章节。
+
+*** 跳到函数开头
+命令实际上是beginning-of-defun，不过我们模糊输入 ~bof~ 就可以了。
+| 快捷键 | 命令(支持模糊匹配) | 操作 |
+| C-M-a  | begin of func      | 跳到函数开头 |
 
 *** 跳到书签
 | 快捷键     | 助记 | 命令(支持模糊匹配) | 操作               |
@@ -182,8 +191,8 @@ Spacemacs带有许多帮助功能，所以在寻求外部帮助之前，我们�
 ** 搜索
 *** 搜索字符串
 通过 ~SPC s s~ 快捷键即可在当前文件中搜索。\\
-该搜索命令还有个好处就是，在搜索结果中上下切换时会自动跳转到对应行，方便确认是否所需结果。
-
+该搜索命令还有个好处就是，在搜索结果中上下切换时会自动跳转到对应行，方便确认是否所需结果。\\
+另外Vim的按键 ~*~ ~#~ ~/~ ~?~ 依然好使哦。
 | 快捷键  | 助记         | 命令(支持模糊匹配) | 操作       |
 | SPC s s | search swoop | swoop              | 搜索字符串 |
 
@@ -216,9 +225,9 @@ Spacemacs带有许多帮助功能，所以在寻求外部帮助之前，我们�
   - 设置起始点
   - 跳转到结束点
 是不是很简单？好，那么怎么设置起始点呢？\\
-可以通过 ~C-@~ (也就是ctrl+@)快捷键或者 set-mark-command命令。
-| 快捷键 | 命令(支持模糊匹配) | 操作           |
-| C-@    | set mark           | 设置标记起始点 |
+可以通过 ~C-@~ (也就是ctrl+@)快捷键或者 set-mark-command命令，又或者 ~v~ 进入选择模式。
+| 快捷键     | 命令(支持模糊匹配) | 操作           |
+| C-@ 或者 v | set mark           | 设置标记起始点 |
 怎么跳到结束点？还记得前面 [[#goto-char][跳转到指定字符]] 吗？想跳哪就跳哪，就是这么任性。
 
 [[../assets/images/180324_selection.gif]]
@@ -227,15 +236,19 @@ Spacemacs带有许多帮助功能，所以在寻求外部帮助之前，我们�
 
 *** 选中单词
 选中单词大同小异，如果起始点设置在单词开头，那么可以通过 ~M-f~ (alt+f) 往前选中一个单词。
-| 快捷键 | 命令(支持模糊匹配) | 操作       |
-| M-f    | forward word       | 前进一个单词 |
-| M-b    | backward word      | 回退一个单词  |
+| 快捷键 | 命令(支持模糊匹配) | 操作             |
+| M-f    | forward word       | 前进一个单词     |
+| M-b    | backward word      | 回退一个单词     |
+| yw     | yank word          | 复制单词         |
+| yW     | yank WORD          | 复制单词(含符号) |
 
 *** 选中行
 选中行大同小异，如果起始点设置在行首，那么可以通过 ~$~ (Vim模式) 或者 ~C-e~ (Emacs模式)跳转行尾。
-| 快捷键   | 命令(支持模糊匹配) | 操作     |
-| $ 或 C-e | line end           | 跳到行尾 |
-| ^ 或 C-a | line begin         | 跳到行首 |
+| 快捷键                      | 命令(支持模糊匹配) | 操作       |
+| $ 或 C-e                    | line end           | 跳到行尾   |
+| ^ 或 C-a                    | line begin         | 跳到行首   |
+| yy                          | yank line          | 复制当前行 |
+| V进入行选择模式 + ~SPC j l~ |                    | 复制多行   |
 
 *** 选中当前函数
 | 快捷键 | 命令(支持模糊匹配) | 操作 |
@@ -346,6 +359,23 @@ Spacemacs定义了一系列以 ~SPC w~ 开头的快捷键，表示window相关�
 | 命令(支持模糊匹配)     | 操作         |
 | comment region         | 注释掉区域   |
 | SPC u + comment-region | 取消注释区域 |
+或者按上文说明选中区域后按 ~M-;~ 。
+
+** 代码片段生成
+通过yasnippet可以很方便地生成代码片段，比如说include、if、for等语句。\\
+虽然auto-complete中有变量 ~auto-completion-enable-snippets-in-popup~ 开启提示，不过比较卡。\\
+建议还是通过 ~SPC i s~ 手动插入。
+| 快捷键  | 命令(支持模糊匹配) | 操作         |
+| SPC i s | insert snippet     | 插入代码片段 |
+
+** 文档生成
+既然snippet能够生成代码片段，生成文档也不在话下。\\
+比如说通过 ~brief~ snippet可以给函数添加文档说明哦。
+
+** 代码折叠
+虽然对我来说代码折叠不是太常用，但是这里也记录一下吧。
+| 快捷键 | 命令(支持模糊匹配) | 操作                           |
+| z a    | fold toggle        | 折叠代码块，再次执行展开代码块 |
 
 ** 自动补全
 自动补全是通过启用auto-complete layer实现的。
@@ -372,7 +402,7 @@ Spacemacs定义了一系列以 ~SPC w~ 开头的快捷键，表示window相关�
 
 ~.clang_complet~ 文件。
 
-** 自动对齐/格式化
+** 自动对齐/格式化k
 自动对齐涉及编码风格，比如说tab长度是2还是4。\\
 自动对齐主要操作就是按tab键，可以选中区域也可以不选中。虽然操作简单，但是背后的配置就不是那么简单。\\
 这里主要说明如何配置C/C++的对齐。可以先参考 [[https://www.emacswiki.org/emacs/IndentingC][Indenting C]] 的说明。\\
@@ -488,8 +518,12 @@ clang-format -style=WebKit -dump-config > .clang-format
 ** 高亮 <<highlight>>
 通过 ~SPC s h~ 快捷键可以高亮变量。\\
 在高亮模式下， ~n~ 键可以跳到下一使用位置， ~p~ 键可以跳到上一使用位置， ~d~ 可以跳到定义位置。\\
-通过 ~SPC s c~ 快捷键可以取消高亮。
-
+通过 ~SPC s c~ 快捷键可以取消高亮。\\
+需要注意的是当文件比较大的时候或者匹配比较多的时候可能造成卡顿。\\
+建议把default range设置成display，然后在实际中使用时切换成function或buffer。
+#+BEGIN_SRC emacs-lisp
+(setq ahs-default-range 'ahs-range-display)
+#+END_SRC
 [[../assets/images/180324_highlight.gif]]
 
 ** smart rename/重构
